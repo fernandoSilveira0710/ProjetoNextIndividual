@@ -9,7 +9,7 @@ public class Utils {
 	// METODO QUE LÊ O CONSOLE E RETORNA UMA STRING(TEXTO)
 	public String lerConsole(String texto) {
 		System.out.print(texto);
-		String textoDigitado = ler.next();
+		String textoDigitado = ler.nextLine();
 		return textoDigitado;
 	}
 	public void fechaConsole() {

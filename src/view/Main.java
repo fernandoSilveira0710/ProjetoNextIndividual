@@ -2,6 +2,7 @@ package view;
 
 import model.Cliente;
 import model.Conta;
+import model.Endereco;
 import util.Utils;
 import util.ValidaCPF;
 import dao.BD;
@@ -45,13 +46,27 @@ public class Main {
 
 // CADASTRA O USUARIO
 	private static void cadastrar() {
-		System.out.println("SEU CPF: " + cpfConsole);
-		String nome = utils.lerConsole("|DIGITE SEU NOME: ");
+		System.out.println(" _________________________________ ");
+		System.out.println("|----  CADASTRO DADOS BASICOS  ---|");
+		System.out.println("|SEU CPF: " + cpfConsole);
+		String rg = utils.lerConsole("|DIGITE SEU RG: ");
+		String nome = utils.lerConsole("|DIGITE SEU NOME COMPLETO: ");
+		System.out.println(" __________________________________ ");
+		System.out.println("|-------  CADASTRO ENDEREÇO  ------|");
+		String rua = utils.lerConsole("|DIGITE SUA RUA: ");
+		String bairro = utils.lerConsole("|DIGITE SEU BAIRRO: ");
+		String numero = utils.lerConsole("|DIGITE SEU NUMERO: ");
+		String cidade = utils.lerConsole("|DIGITE SUA CIDADE: ");
+		String estado = utils.lerConsole("|DIGITE SEU ESTADO: ");
+		String cep = utils.lerConsole("|DIGITE SEU CEP: ");
+		System.out.println("|_________________________________|");
+		// FALTA VALIDAR CAMPOS ANTES DE ENVIAR
+		Endereco endereco = new Endereco(cidade,estado,bairro,numero,rua,cep);
 		// CONTINUAR DAQUI
-		Cliente cliente = new Cliente(cpfConsole, nome);
+		Cliente cliente = new Cliente(cpfConsole, rg,nome,endereco);
 		Conta conta = new Conta(cliente);
 		cliente.cadastrarDados(bd, conta);
-		System.out.println("\n\n| CLIENTE CADASTRADO COM SUCESSO!\n\n\n");
+		System.out.println("\n\n>>CLIENTE CADASTRADO COM SUCESSO!<<\n\n");
 		menuPrincipal(conta);
 		buscaOperacaoPrincipal(conta);
 
@@ -119,7 +134,7 @@ public class Main {
 				System.out.println("\n>>SALDO DISPONIVEL: " + utils.convertToReais(conta.consultarSaldo()) + "<<\n");
 				break;
 			}
-			case 4: { //saque
+			case 4: { // saque
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
 					if (conta.saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")))) {

@@ -4,14 +4,19 @@ import java.util.ArrayList;
 
 import model.Cliente;
 import model.Conta;
+import model.Endereco;
 import model.TipoCliente;
 
 public class BD {
 	public static ArrayList<Conta> conta;
-
+	
 	public BD() {
 		conta = new ArrayList<Conta>();
-		conta.add(new Conta(new Cliente("43546219830", "Fernando Silveira")));
+		conta.add(new Conta(new Cliente("43546219830",
+										"447218402",
+										"Fernando Silveira",
+										new Endereco("Cesário Lange","SP","Centro","1759","Rua do Comércio","18285-000"))));
+		
 	}
 
 	// IDENTIFICA CONTA NO BD APARTIR DO NUMERO DA CONTA
