@@ -1,7 +1,5 @@
 package model;
 
-import dao.BD;
-
 public class Conta {
 	private String numero;
 	private double saldo;

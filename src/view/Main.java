@@ -11,7 +11,7 @@ public class Main {
 	static ValidaCPF validaCPF = new ValidaCPF();
 	static BD bd = new BD();
 	static String cpfConsole = "";
-	static boolean logado = false;
+	static boolean logado = false; // FLAG
 
 	public static void main(String[] args) {
 		logado = false;
@@ -22,21 +22,24 @@ public class Main {
 
 // EXIBE MENU LOGIN
 	private static void menuInicio() {
-		System.out.println("|จจจจจBEM VINDO AO BANCO NEXTจจจจจ|");
-		System.out.println("|จจจจจจจจจจจจจจLOGINจจจจจจจจจจจจจจ|");
+		System.out.println(" _________________________________ ");
+		System.out.println("|-----BEM VINDO AO BANCO NEXT-----|");
+		System.out.println("|------------  LOGIN  ------------|");
 		System.out.println("|                                 |");
+
 		while (true) {
-			cpfConsole = utils.lerConsole("|จจจDIGITE SEU CPF:");
+			cpfConsole = utils.lerConsole("|DIGITE SEU CPF:");
+
 			if (validarCpf(cpfConsole))// valida cpf
 				break;
 		}
+		System.out.println("|_________________________________|");
 		chamarBanco();
 	}
 
 // EXIBE MENU CADASTRO
 	private static void menuCadastro() {
-		System.out.println("|จจจจจจจจจจจจจจจจจจจจจจจจจจจจจจจจจ|");
-		System.out.println("|จจจจจจจจจจจCADASTROจจจจจจจจจจจจจจ|");
+		System.out.println("\n|----------  CADASTRO  ---------|");
 		cadastrar();
 	}
 
@@ -48,6 +51,7 @@ public class Main {
 		Cliente cliente = new Cliente(cpfConsole, nome);
 		Conta conta = new Conta(cliente);
 		cliente.cadastrarDados(bd, conta);
+		System.out.println("\n\n| CLIENTE CADASTRADO COM SUCESSO!\n\n\n");
 		menuPrincipal(conta);
 		buscaOperacaoPrincipal(conta);
 
@@ -55,18 +59,18 @@ public class Main {
 
 // EXIBE MENU PRINCIPAL
 	private static void menuPrincipal(Conta conta) {
-		System.out.println("|จSEJA BEM VINDO " + conta.getCliente().getNome().toUpperCase() + "|");
-		System.out.println("|NUMERO CONTA: " + conta.getNumero() + "          |");
-		System.out.println("|SALDO DISPONIVEL:" + utils.convertToReais(conta.consultarSaldo()) + " |");
-		System.out.println("|TIPO DE CONTA:" + conta.getCliente().getTipo() + " |");
-		System.out.println("|จจจจจจจจจจจจจจจจจจจจจจจจจ|");
-		System.out.println("|จจMENU PRINCIPALจจจจจจจจจจจจจจจจจ|");
-		System.out.println("|จจจ1 - TRANSFERIRจจจจจจจจจจจจจจจจ|");
-		System.out.println("|จจจ2 - DEPOSITARจจจจจจจจจจจจจจจจจ|");
-		System.out.println("|จจจ3 - CONSULTAR SALDOจจจจจจจจจจจ|");
-		System.out.println("|จจจ4 - SACARจจจจจจจจจจจจจจจจจจจจจ|");
-		System.out.println("|จจจ0 - SAIRจจจจจจจจจจจจจจจจจจจจจจ|");
-		System.out.println("|จจจจจจจจจจจจจจจจจจจจจจจจจจจจจจจจจ|");
+		System.out.println("\n\n>>OLม " + conta.getCliente().getNome().toUpperCase());
+		System.out.println(">>NUMERO CONTA: " + conta.getNumero());
+		System.out.println(">>SALDO DISPONIVEL:" + utils.convertToReais(conta.consultarSaldo()));
+		System.out.println(">>TIPO DE CONTA:" + conta.getCliente().getTipo());
+		System.out.println(" _________________________________ ");
+		System.out.println("|--------  MENU PRINCIPAL  -------|");
+		System.out.println("|1 - TRANSFERIR                   |");
+		System.out.println("|2 - DEPOSITAR                    |");
+		System.out.println("|3 - CONSULTAR SALDO              |");
+		System.out.println("|4 - SACAR                        |");
+		System.out.println("|0 - SAIR                         |");
+		System.out.println("|_________________________________|");
 	}
 
 //SWITCH COM OPERAวีES PRINCIPAIS(SALDO,SAQUE,TRANSFERENCIA,DEPOSITO E SAIR)
@@ -76,16 +80,16 @@ public class Main {
 			int operacao = Integer.parseInt(utils.lerConsole("|DIGITE A OPERAวรO: "));
 
 			switch (operacao) {
-			case 1: {
+			case 1: { // transferencia
 				while (true) {
 					String numDesti = utils.lerConsole("DIGITE O NUMERO DA CONTA DESTINO: ");
 					Conta contaDestino = bd.identificaContaNum(numDesti);// conta recebida do bd
 					if (contaDestino != null) {
 						double valor = Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA TRANSFERIR: "));
 						if (conta.transferir(contaDestino, valor)) {
-							System.out.println("\n!!!TRANSFERENCIA DE " + utils.convertToReais(valor) + " PARA "
+							System.out.println("\n>>TRANSFERENCIA DE " + utils.convertToReais(valor) + "\n PARA "
 									+ contaDestino.getCliente().getNome().toUpperCase()
-									+ " REALIZADO COM SUCESSO!!!! \n\n");
+									+ " REALIZADO COM SUCESSO<< \n\n");
 							menuPrincipal(conta);
 							break;
 						} else {
@@ -97,46 +101,44 @@ public class Main {
 				}
 				break;
 			}
-			case 2: {
+			case 2: { // deposito
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
 					if (conta
 							.depositar(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA DEPOSITAR: ")))) {
-						System.out.println("DEPOSITO REALIZADO COM SUCESSO! \n\n");
+						System.out.println("\n\n>>DEPOSITO REALIZADO COM SUCESSO!<< \n\n");
 						menuPrincipal(conta);
 						break;
 					} else {
-						System.err.println("ERRO NO DEPOSITO! \n");
+						System.err.println("\n>>ERRO NO DEPOSITO!<< \n");
 					}
 				}
 				break;
 			}
-			case 3: {
-				System.out.println("| SALDO DISPONIVEL: " + utils.convertToReais(conta.consultarSaldo()) + "|");
+			case 3: { // saldo
+				System.out.println("\n>>SALDO DISPONIVEL: " + utils.convertToReais(conta.consultarSaldo()) + "<<\n");
 				break;
 			}
-			case 4: {
+			case 4: { //saque
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
 					if (conta.saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")))) {
-						System.out.println("SAQUE REALIZADO COM SUCESSO!");
+						System.out.println("\n\n>>SAQUE REALIZADO COM SUCESSO!<<");
 						menuPrincipal(conta);
 						break;
 					} else {
-						System.err.println("SALDO INSUFICIENTE");
+						System.err.println("\n>>SALDO INSUFICIENTE<<\n");
 					}
 				}
 				break;
 			}
-			case 0: {
-				System.out.println("\n\n");
-				System.out.println("|จจจจจจจจLOGOFF CONCLUIDO!จจจจจจจจ|");
-				System.out.println("\n\n");
+			case 0: { // sair
+				System.out.println("\n\n|        LOGOFF CONCLUIDO!        |\n\n");
 				loop = false;
 				break;
 			}
 			default:
-				System.out.println("|จจDIGITE NUMEROS ENTRE 0 E 3จจจจจ|");
+				System.out.println("|    DIGITE NUMEROS ENTRE 0 E 3   |");
 			}
 			if (!loop)
 				menuInicio();

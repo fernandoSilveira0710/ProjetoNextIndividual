@@ -5,14 +5,15 @@ import java.util.Locale;
 import java.util.Scanner;
 
 public class Utils {
+	Scanner ler = new Scanner(System.in);
 	// METODO QUE LÊ O CONSOLE E RETORNA UMA STRING(TEXTO)
 	public String lerConsole(String texto) {
-		Scanner ler = new Scanner(System.in);
 		System.out.print(texto);
 		String textoDigitado = ler.next();
-
 		return textoDigitado;
-
+	}
+	public void fechaConsole() {
+		ler.close();
 	}
 
 	// FORMATA PARA REAIS
