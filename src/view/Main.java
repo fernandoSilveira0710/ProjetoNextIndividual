@@ -12,13 +12,13 @@ public class Main {
 	static ValidaCPF validaCPF = new ValidaCPF();
 	static BD bd = new BD();
 	static String cpfConsole = "";
+	static String senha = "";
 	static boolean logado = false; // FLAG
 
 	public static void main(String[] args) {
 		logado = false;
 		menuInicio();
-		if (!logado)
-			menuCadastro(); // caso logado ele puxa o cadastro
+
 	}
 
 // EXIBE MENU LOGIN
@@ -30,18 +30,18 @@ public class Main {
 
 		while (true) {
 			cpfConsole = utils.lerConsole("|DIGITE SEU CPF:");
+			if (validarCpf(cpfConsole)) {
+				if (testaLogin()) {
+					senha = utils.lerConsole("|DIGITE SUA SENHA: ");
+					chamarBanco(true);
+				} else {
+					break;
+				}
+			}
 
-			if (validarCpf(cpfConsole))// valida cpf
-				break;
 		}
 		System.out.println("|_________________________________|");
-		chamarBanco();
-	}
-
-// EXIBE MENU CADASTRO
-	private static void menuCadastro() {
-		System.out.println("\n|----------  CADASTRO  ---------|");
-		cadastrar();
+		chamarBanco(false);
 	}
 
 // CADASTRA O USUARIO
@@ -51,6 +51,8 @@ public class Main {
 		System.out.println("|SEU CPF: " + cpfConsole);
 		String rg = utils.lerConsole("|DIGITE SEU RG: ");
 		String nome = utils.lerConsole("|DIGITE SEU NOME COMPLETO: ");
+		String email = utils.lerConsole("|DIGITE SEU EMAIL: ");
+		senha = utils.lerConsole("DIGITE SUA SENHA: ");
 		System.out.println(" __________________________________ ");
 		System.out.println("|-------  CADASTRO ENDEREÇO  ------|");
 		String rua = utils.lerConsole("|DIGITE SUA RUA: ");
@@ -61,9 +63,9 @@ public class Main {
 		String cep = utils.lerConsole("|DIGITE SEU CEP: ");
 		System.out.println("|_________________________________|");
 		// FALTA VALIDAR CAMPOS ANTES DE ENVIAR
-		Endereco endereco = new Endereco(cidade,estado,bairro,numero,rua,cep);
+		Endereco endereco = new Endereco(cidade, estado, bairro, numero, rua, cep);
 		// CONTINUAR DAQUI
-		Cliente cliente = new Cliente(cpfConsole, rg,nome,endereco);
+		Cliente cliente = new Cliente(senha, email, cpfConsole, rg, nome, endereco);
 		Conta conta = new Conta(cliente);
 		cliente.cadastrarDados(bd, conta);
 		System.out.println("\n\n>>CLIENTE CADASTRADO COM SUCESSO!<<\n\n");
@@ -171,14 +173,25 @@ public class Main {
 	}
 
 // CHAMA O BANCO E ENVIA CPF VALIDADO RETORNANDO A CONTA 
-	private static void chamarBanco() {
-		Conta conta = bd.consultaCpf(validaCPF.removeCaracteresEspeciais(cpfConsole));
-		if (conta != null) {
+	private static void chamarBanco(boolean login) {
+		Conta conta = bd.retornaContaBanco(validaCPF.removeCaracteresEspeciais(cpfConsole), senha);
+		if (conta != null && login) {
 			logado = true;
 			menuPrincipal(conta);
 			buscaOperacaoPrincipal(conta);
-		} else {
+		} else if (!login) {
 			cadastrar();
+		} else {
+			System.out.println("CPF OU SENHA INCORRETOS!");
+		}
+	}
+
+	// VERIFICA SE SENHA É COMPATIVEL COM CONTA
+	private static boolean testaLogin() {
+		if (bd.consultaCpfBanco(cpfConsole)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 

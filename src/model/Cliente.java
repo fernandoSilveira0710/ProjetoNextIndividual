@@ -5,19 +5,45 @@ import dao.BD;
 public class Cliente {
 	private String cpf;
 	private String nome;
+	private String email;
+	private String senha;
 	private TipoCliente tipo;
 	private Endereco endereco;//FALTA IMPLEMENTAR
 	private String rg;
 	
 	
-	public Cliente(String cpf, String rg,String nome, Endereco endereco) {
+	public Cliente(String senha,String email,String cpf, String rg,String nome, Endereco endereco) {
 		this.cpf = cpf;
 		this.rg = rg;
 		this.nome = nome;
 		this.endereco = endereco;
+		this.email = email;
+		this.senha = senha;
 		this.tipo = TipoCliente.COMUM;
+		
 	}	
 	
+	
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+	public String getSenha() {
+		return senha;
+	}
+
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+
 	public String getCpf() {
 		return cpf;
 	}
@@ -42,7 +68,7 @@ public class Cliente {
 	}
 
 	public void cadastrarDados(BD bd, Conta conta) {
-		bd.conta.add(conta);
+		bd.adicionaConta(conta);
 	}
 
 	public String getRg() {
