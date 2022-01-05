@@ -5,12 +5,11 @@ import model.Conta;
 import model.Endereco;
 import util.Utils;
 import util.ValidaCPF;
+import controller.ControlLogin;
 import dao.BD;
 
 public class Main {
 	static Utils utils = new Utils();
-	static ValidaCPF validaCPF = new ValidaCPF();
-	static BD bd = new BD();
 	static String cpfConsole = "";
 	static String senha = "";
 	static boolean logado = false; // FLAG
@@ -30,10 +29,10 @@ public class Main {
 
 		while (true) {
 			cpfConsole = utils.lerConsole("|DIGITE SEU CPF:");
-			if (validarCpf(cpfConsole)) {
-				if (testaLogin()) {
+			if (ControlLogin.validarCpf(cpfConsole)) {
+				if (ControlLogin.testaLogin(cpfConsole)) {// Verifica se cpf existe no banco
 					senha = utils.lerConsole("|DIGITE SUA SENHA: ");
-					chamarBanco(true);
+					buscaContaCadastrada(ControlLogin.buscaContaCadastrada(true, cpfConsole, senha));
 				} else {
 					break;
 				}
@@ -41,7 +40,7 @@ public class Main {
 
 		}
 		System.out.println("|_________________________________|");
-		chamarBanco(false);
+		buscaContaCadastrada(ControlLogin.buscaContaCadastrada(false, cpfConsole, senha));
 	}
 
 // CADASTRA O USUARIO
@@ -62,24 +61,18 @@ public class Main {
 		String estado = utils.lerConsole("|DIGITE SEU ESTADO: ");
 		String cep = utils.lerConsole("|DIGITE SEU CEP: ");
 		System.out.println("|_________________________________|");
+
 		// FALTA VALIDAR CAMPOS ANTES DE ENVIAR
-		Endereco endereco = new Endereco(cidade, estado, bairro, numero, rua, cep);
-		// CONTINUAR DAQUI
-		Cliente cliente = new Cliente(senha, email, cpfConsole, rg, nome, endereco);
-		Conta conta = new Conta(cliente);
-		cliente.cadastrarDados(bd, conta);
+		ControlLogin.cadastrarConta(senha, cpfConsole, rg, nome, email, rua, bairro, numero, cidade, estado, cep);
 		System.out.println("\n\n>>CLIENTE CADASTRADO COM SUCESSO!<<\n\n");
-		menuPrincipal(conta);
-		buscaOperacaoPrincipal(conta);
+		menuPrincipal();
+		buscaOperacaoPrincipal();
 
 	}
 
 // EXIBE MENU PRINCIPAL
-	private static void menuPrincipal(Conta conta) {
-		System.out.println("\n\n>>OLÁ " + conta.getCliente().getNome().toUpperCase());
-		System.out.println(">>NUMERO CONTA: " + conta.getNumero());
-		System.out.println(">>SALDO DISPONIVEL:" + utils.convertToReais(conta.consultarSaldo()));
-		System.out.println(">>TIPO DE CONTA:" + conta.getCliente().getTipo());
+	private static void menuPrincipal() {
+		System.out.println(ControlLogin.exibeDetalhesConta());
 		System.out.println(" _________________________________ ");
 		System.out.println("|--------  MENU PRINCIPAL  -------|");
 		System.out.println("|1 - TRANSFERIR                   |");
@@ -91,7 +84,7 @@ public class Main {
 	}
 
 //SWITCH COM OPERAÇÕES PRINCIPAIS(SALDO,SAQUE,TRANSFERENCIA,DEPOSITO E SAIR)
-	private static void buscaOperacaoPrincipal(Conta conta) {
+	private static void buscaOperacaoPrincipal() {
 		boolean loop = true;
 		while (loop) {
 			int operacao = Integer.parseInt(utils.lerConsole("|DIGITE A OPERAÇÃO: "));
@@ -99,21 +92,14 @@ public class Main {
 			switch (operacao) {
 			case 1: { // transferencia
 				while (true) {
-					String numDesti = utils.lerConsole("DIGITE O NUMERO DA CONTA DESTINO: ");
-					Conta contaDestino = bd.identificaContaNum(numDesti);// conta recebida do bd
-					if (contaDestino != null) {
-						double valor = Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA TRANSFERIR: "));
-						if (conta.transferir(contaDestino, valor)) {
-							System.out.println("\n>>TRANSFERENCIA DE " + utils.convertToReais(valor) + "\n PARA "
-									+ contaDestino.getCliente().getNome().toUpperCase()
-									+ " REALIZADO COM SUCESSO<< \n\n");
-							menuPrincipal(conta);
-							break;
-						} else {
-							System.err.println("ERRO NA TRANSFERENCIA!SALDO INSUFICIENTE \n");
-						}
-					} else {
-						System.err.println("ESTA CONTA NÃO EXISTE! \n");
+					String numDestino = utils.lerConsole("DIGITE O NUMERO DA CONTA DESTINO: ");
+					double valorDeTransferencia = Double
+							.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA TRANSFERIR: "));
+					String[] resposta = ControlLogin.buscaContaeTransfere(numDestino, valorDeTransferencia);
+					System.out.println(resposta[0]);// Exibe resposta do control
+					if (resposta[1].equals("0")) {
+						menuPrincipal();
+						break;
 					}
 				}
 				break;
@@ -121,10 +107,9 @@ public class Main {
 			case 2: { // deposito
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
-					if (conta
-							.depositar(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA DEPOSITAR: ")))) {
+					if (ControlLogin.depositaNaConta()) {
 						System.out.println("\n\n>>DEPOSITO REALIZADO COM SUCESSO!<< \n\n");
-						menuPrincipal(conta);
+						menuPrincipal();
 						break;
 					} else {
 						System.err.println("\n>>ERRO NO DEPOSITO!<< \n");
@@ -133,15 +118,15 @@ public class Main {
 				break;
 			}
 			case 3: { // saldo
-				System.out.println("\n>>SALDO DISPONIVEL: " + utils.convertToReais(conta.consultarSaldo()) + "<<\n");
+				System.out.println(ControlLogin.consultaSaldo());
 				break;
 			}
 			case 4: { // saque
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
-					if (conta.saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")))) {
+					if (ControlLogin.saqueConta()) {
 						System.out.println("\n\n>>SAQUE REALIZADO COM SUCESSO!<<");
-						menuPrincipal(conta);
+						menuPrincipal();
 						break;
 					} else {
 						System.err.println("\n>>SALDO INSUFICIENTE<<\n");
@@ -162,37 +147,17 @@ public class Main {
 		}
 	}
 
-// ENVIA DADOS PARA UMA CLASSE VALIDACAO E RETORNA BOOLEAN
-	private static boolean validarCpf(String cpf) {
-		if (validaCPF.verificaCpf(cpf)) {
-			return true;
-		} else {
-			System.out.println("|CPF INVALIDO! DIGITE CORRETAMENTE|");
-			return false;
-		}
-	}
+	// VERIFICA O BANCO SE CONTEM CONTA E EXIBE A INFORMAÇÃO
+	private static void buscaContaCadastrada(int op) {
 
-// CHAMA O BANCO E ENVIA CPF VALIDADO RETORNANDO A CONTA 
-	private static void chamarBanco(boolean login) {
-		Conta conta = bd.retornaContaBanco(validaCPF.removeCaracteresEspeciais(cpfConsole), senha);
-		if (conta != null && login) {
+		if (op == 0) {
 			logado = true;
-			menuPrincipal(conta);
-			buscaOperacaoPrincipal(conta);
-		} else if (!login) {
+			menuPrincipal();
+			buscaOperacaoPrincipal();
+		} else if (op == 1) {
 			cadastrar();
 		} else {
-			System.out.println("CPF OU SENHA INCORRETOS!");
+			System.out.println("\n|CPF OU SENHA INCORRETOS!\n");
 		}
 	}
-
-	// VERIFICA SE SENHA É COMPATIVEL COM CONTA
-	private static boolean testaLogin() {
-		if (bd.consultaCpfBanco(cpfConsole)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 }
