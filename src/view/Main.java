@@ -1,8 +1,8 @@
 package view;
 
-import model.Cliente;
-import model.Conta;
 import model.Endereco;
+import model.cliente.Cliente;
+import model.conta.Conta;
 import util.Utils;
 import util.ValidaCPF;
 import controller.ControlLogin;

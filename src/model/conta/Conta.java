@@ -1,24 +1,38 @@
-package model;
+package model.conta;
+
+import model.cliente.Cliente;
+import model.cliente.TipoCliente;
 
 public class Conta {
-	private String numero;
-	private double saldo;
-
-	public void setSaldo(double saldo) {
-		this.saldo = saldo;
-	}
-
-	private Cliente cliente;
-	public static int contasCriadas = 1;
+	protected int id;
+	protected String numero;
+	protected double saldo;
+	protected Cliente cliente;
+	private static int contasCriadas = 1;
 
 	public Conta(Cliente cliente) {
 		this.numero = novaConta();
 		this.saldo = 0.0;
 		this.cliente = cliente;
+		this.id = novoId();
 	}
+	public Conta() {
+		
+	}
+	
+
+	private int novoId() {
+		// TODO Auto-generated method stub
+		return contasCriadas++;
+	}
+
 
 	private String novaConta() {
 		return String.valueOf(contasCriadas++);
+	}
+	
+	public void setSaldo(double saldo) {
+		this.saldo = saldo;
 	}
 
 	public String getNumero() {

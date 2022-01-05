@@ -2,10 +2,10 @@ package dao;
 
 import java.util.ArrayList;
 
-import model.Cliente;
-import model.Conta;
 import model.Endereco;
-import model.TipoCliente;
+import model.cliente.Cliente;
+import model.cliente.TipoCliente;
+import model.conta.Conta;
 
 public class BD {
 	public static ArrayList<Conta> conta;

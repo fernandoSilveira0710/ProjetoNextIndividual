@@ -1,6 +1,8 @@
-package model;
+package model.cliente;
 
 import dao.BD;
+import model.Endereco;
+import model.conta.Conta;
 
 public class Cliente {
 	private String cpf;
