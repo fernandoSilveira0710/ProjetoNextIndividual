@@ -1,8 +1,6 @@
 package model.cliente;
 
-import dao.BD;
 import model.Endereco;
-import model.conta.Conta;
 
 public class Cliente {
 	private String cpf;
@@ -10,11 +8,10 @@ public class Cliente {
 	private String email;
 	private String senha;
 	private TipoCliente tipo;
-	private Endereco endereco;//FALTA IMPLEMENTAR
+	private Endereco endereco;// FALTA IMPLEMENTAR
 	private String rg;
-	
-	
-	public Cliente(String senha,String email,String cpf, String rg,String nome, Endereco endereco) {
+
+	public Cliente(String senha, String email, String cpf, String rg, String nome, Endereco endereco) {
 		this.cpf = cpf;
 		this.rg = rg;
 		this.nome = nome;
@@ -22,29 +19,23 @@ public class Cliente {
 		this.email = email;
 		this.senha = senha;
 		this.tipo = TipoCliente.COMUM;
-		
-	}	
-	
-	
+	}
+
 	public String getEmail() {
 		return email;
 	}
-
 
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-
 	public String getSenha() {
 		return senha;
 	}
 
-
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-
 
 	public String getCpf() {
 		return cpf;
@@ -65,12 +56,9 @@ public class Cliente {
 	public TipoCliente getTipo() {
 		return tipo;
 	}
+
 	public void setTipo(TipoCliente tipoCliente) {
 		this.tipo = tipoCliente;
-	}
-
-	public void cadastrarDados(BD bd, Conta conta) {
-		bd.adicionaConta(conta);
 	}
 
 	public String getRg() {
@@ -88,4 +76,5 @@ public class Cliente {
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
 	}
+
 }

@@ -1,6 +1,4 @@
-/dao/
-/model/
-/util/
 /view/
 /controller/
-/teste/
+/model/
+/dao/
