@@ -3,7 +3,7 @@ package model.conta;
 import model.cliente.Cliente;
 import model.cliente.TipoCliente;
 
-public abstract class Conta {
+public class Conta {
 	protected int id;
 	protected String numero;
 	protected double saldo;
@@ -24,7 +24,11 @@ public abstract class Conta {
 		return contasCriadas++;
 	}
 
+	public int getId() {
+		return id;
+	}
 
+	
 	private String novaConta() {
 		return String.valueOf(contasCriadas++);
 	}

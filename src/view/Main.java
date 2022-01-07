@@ -1,6 +1,7 @@
 package view;
 
 import model.Endereco;
+import model.pix.TipoChavePix;
 import util.Utils;
 import controller.ControlLogin;
 
@@ -148,7 +149,9 @@ public class Main {
 				break;
 			}
 			case 0: { // sair
-				System.out.println("\n\n|        LOGOFF CONCLUIDO!        |\n\n");
+				System.out.println("\n\n|        LOGOFF CONCLUIDO!        |\n\n"
+						+ "====================================================================================");
+
 				loop = false;
 				ControlLogin.zerarAlocacoesDeMemoria(); // zera os cadastros setados em memória
 				break;
@@ -167,8 +170,7 @@ public class Main {
 		System.out.println("|----------  MENU PIX   ----------|");
 		System.out.println("|1 - CADASTRAR CHAVE PIX          |");
 		System.out.println("|2 - VISUALIZAR CHAVES PIX        |");
-		System.out.println("|3 - TRANSFERIR VIA PIX           |");
-		System.out.println("|4 - RECEBER VIA PIX              |");
+		System.out.println("|3 - TRANSFERIR VIA PIX (INDISP)  |");
 		System.out.println("|0 - VOLTAR AO MENU ANTERIOR      |");
 		System.out.println("|_________________________________|");
 		String op = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
@@ -178,24 +180,78 @@ public class Main {
 	private static void buscaOperacaoPix(String op) {
 		switch (op) {
 		case "1": {
-
+			exibirChavesDisponiveis();
+			exibirOpcoesChavesPixCadastro();
+			menuPrincipal();
+			break;
 		}
 		case "2": {
-
+			exibirChavesDisponiveis();
 		}
 		case "3": {
-
-		}
-		case "4": {
-
+			//tranferirViaPix();
 		}
 		case "0": {
-
+			menuPrincipal();
 		}
 		default:
 			System.out.println("DIGITE VALORES ENTRE 0 E 4");
 		}
 
+	}
+//	private static void tranferirViaPix() {
+//		String chavePix = utils.lerConsole("DIGITE A CHAVE PIX DE DESTINO: ");
+//		ControlLogin.buscaETRansferePix(chavePix);
+//	}
+
+	//CPF,Email,Telefone,Aleatorio;
+	private static void exibirOpcoesChavesPixCadastro() {
+		while(true) {
+			System.out.println(" _________________");
+			System.out.println("|--- TIPO PIX ----|");
+			System.out.println("|0 - CPF          |");
+			System.out.println("|1 - EMAIL        |");
+			System.out.println("|2 - TELEFONE     |");
+			System.out.println("|3 - ALEATORIO    |");
+			System.out.println("|_________________|");
+			String op = utils.lerConsole("|DIGITE A OPÇÃO: ");
+			if(buscaOperacaoTipoPix(op)) {
+				System.out.println("\n   >>CHAVE PIX REGISTRADA COM SUCESSO!<<  ");
+				break;
+			}else {
+				System.out.println("\n   >>ERRO NA CHAVE PIX OU PIX JÁ EXISTE, DIGITE NOVAMENTE!<<  ");
+			}
+		}
+	}
+//VERIFICA TIPO DE OPERACAO PIX E RETORNA MSG TOMANDO UMA AÇÃO
+	//int idCC, int idCP, TipoChavePix tipoChavePix, String cpf, boolean b
+	//int tipoChavePix, String conteudoChave,int chave, boolean b
+	private static boolean buscaOperacaoTipoPix(String op) {
+		
+		switch (op) {
+		case "0": {
+			return ControlLogin.cadastraChavePix(0, "CPF", true);
+		}
+		case "1": {
+			String email = utils.lerConsole("DIGITE O EMAIL: ");
+			return ControlLogin.cadastraChavePix(1, email, true);
+		}
+		case "2": {
+			String telefone = utils.lerConsole("DIGITE O TELEFONE: ");
+			return ControlLogin.cadastraChavePix(2, telefone, true);
+		}
+		case "3": {
+			return ControlLogin.cadastraChavePix(3, "", true);
+		}
+		default:
+			System.out.println("DIGITE VALORES ENTRE 0 E 3");
+			return false;
+		}
+	
+}
+
+	private static void exibirChavesDisponiveis() {
+		System.out.println(ControlLogin.exibirChavesPix());
 	}
 
 	// VERIFICA O BANCO SE CONTEM CONTA E EXIBE A INFORMAÇÃO
@@ -229,7 +285,7 @@ public class Main {
 	private static boolean exibeOpcao(String titulo) {
 		if (ControlLogin.id == 3) {
 			System.out.println("-------  " + titulo + "  -----");
-			String resposta = utils.lerConsole("| 0 - CORRENTE | 1 - POUPANCA |" + "\n|DIGITE A OPÇÃO:              |");
+			String resposta = utils.lerConsole("| 0 - CORRENTE | 1 - POUPANCA |" + "\n|DIGITE A OPÇÃO:");
 			if (resposta.equals("0")) {
 				System.out.println("|___________________________  |");
 				return false;

@@ -1,11 +1,15 @@
 package controller;
 
+import java.util.UUID;
+
 import dao.BD;
 import model.Endereco;
 import model.cliente.Cliente;
 import model.conta.Conta;
 import model.conta.ContaCorrente;
 import model.conta.ContaPoupanca;
+import model.pix.Pix;
+import model.pix.TipoChavePix;
 import util.Utils;
 import util.ValidaCPF;
 
@@ -49,6 +53,7 @@ public class ControlLogin {
 			cc = new ContaCorrente(cliente);
 			bd.adicionaContaCorrente(cc);
 			bd.adicionaContaPoupanca(cp);
+
 			id = 3;
 		}
 
@@ -83,11 +88,8 @@ public class ControlLogin {
 			if (!tipo && bd.tipoConta == 1) {
 				verifica = cc.transferir(contaDestino, valorDeTransferencia);
 			} else if (!tipo && bd.tipoConta == 2) {
-				valorDeTransferencia += 5.6;
+				cc.saque(5.60);// DESCONTA TAXA
 				verifica = cc.transferir(contaDestino, valorDeTransferencia);
-			} else if (tipo && bd.tipoConta == 1) {
-				valorDeTransferencia += 5.6;
-				verifica = cp.transferir(contaDestino, valorDeTransferencia);
 			} else if (tipo && bd.tipoConta == 2) {
 				verifica = cp.transferir(contaDestino, valorDeTransferencia);
 			}
@@ -167,17 +169,87 @@ public class ControlLogin {
 			return 2;
 		}
 	}
+//	// BUSCA E TRANFERE VIA CHAVE PIX
+//	public static boolean buscaETRansferePix(String chavePix) {
+//		return bd.buscaeTransferePix(chavePix);
+//	}
+
+	// EXIBE CHAVE PIX BUSCANDO POR CC E CP
+	public static String exibirChavesPix() {
+		if (cc == null && cp != null) {
+			return bd.consultaPix(0, cp.getId());
+		} else if (cc != null && cp == null) {
+			return bd.consultaPix(cc.getId(), 0);
+		}
+		return bd.consultaPix(cc.getId(), cp.getId());
+	}
+
+	// CRIA CHAVE PIX
+	public static boolean cadastraChavePix(int tipoChavePix, String conteudoChave, boolean b) {
+		return bd.cadastraChavePix(cc.getId(), cp.getId(), identificaTipoChavePix(tipoChavePix),
+				identificaConteudoChave(tipoChavePix, conteudoChave), b);
+	}
+
+	// IDENTIFICA CONTEUDO CHAVE
+	private static String identificaConteudoChave(int chave, String conteudoChave) {
+		String cpf = null;
+		if (cc != null)
+			cpf = cc.getCliente().getCpf();
+		if (cp != null)
+			cpf = cp.getCliente().getCpf();
+		switch (chave) {
+		case 0: {
+			return cpf;
+		}
+		case 1: {
+			return conteudoChave;
+
+		}
+		case 2: {
+			return conteudoChave;
+		}
+		case 3: {
+			return gerarAleatorio();
+		}
+		}
+		return gerarAleatorio();
+	}
+
+// GERA ID ALEATORIO
+	private static String gerarAleatorio() {
+		return UUID.randomUUID().toString();
+	}
+
+	// IDENTIFICA TIPO DE CHAVE
+	private static TipoChavePix identificaTipoChavePix(int tipoChavePix) {
+		switch (tipoChavePix) {
+		case 0: {
+			return TipoChavePix.CPF;
+		}
+		case 1: {
+			return TipoChavePix.Email;
+
+		}
+		case 2: {
+			return TipoChavePix.Telefone;
+		}
+		case 3: {
+			return TipoChavePix.Aleatorio;
+		}
+		}
+		return TipoChavePix.Aleatorio;
+	}
 
 	private static void identificaContas() {
 		if (cc != null) {
 			id = 1;
-		}if (cp != null) {
+		}
+		if (cp != null) {
 			id = 2;
-		}if (cp != null && cc != null) {
+		}
+		if (cp != null && cc != null) {
 			id = 3;
 		}
-		System.out.println(id);
-
 	}
 
 	// RECUPERA SENHA

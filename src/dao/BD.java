@@ -1,20 +1,26 @@
 package dao;
 
 import java.util.ArrayList;
+
 import model.Endereco;
 import model.cliente.Cliente;
 import model.conta.Conta;
 import model.conta.ContaCorrente;
 import model.conta.ContaPoupanca;
+import model.pix.Pix;
+import model.pix.TipoChavePix;
 
 public class BD {
-	public static ArrayList<ContaPoupanca> contaPoupanca;
-	public static ArrayList<ContaCorrente> contaCorrente;
+	public static ArrayList<ContaPoupanca> listCP;
+	public static ArrayList<ContaCorrente> listCC;
+	public static ArrayList<Pix> listPix;
+
 	public static int tipoConta = 0;
 
 	public BD() {
-		contaPoupanca = new ArrayList<ContaPoupanca>();
-		contaCorrente = new ArrayList<ContaCorrente>();
+		listPix = new ArrayList<Pix>();
+		listCP = new ArrayList<ContaPoupanca>();
+		listCC = new ArrayList<ContaCorrente>();
 		criarObjetosEstaticos();
 	}
 
@@ -23,51 +29,105 @@ public class BD {
 		Cliente cliente1 = new Cliente("1234", "luizfernando962@gmail.com", "43546219830", "447218402",
 				"Fernando Silveira",
 				new Endereco("Cesário Lange", "SP", "Centro", "1759", "Rua do Comércio", "18285-000"));
-		contaCorrente.add(new ContaCorrente(cliente1));
-		contaPoupanca.add(new ContaPoupanca(cliente1));
+		ContaCorrente cc = new ContaCorrente(cliente1);//1
+		ContaPoupanca cp = new ContaPoupanca(cliente1);//2
+		Pix pix = new Pix(cc.getId(), cp.getId());
+		pix.ativarChave(TipoChavePix.CPF, "43546219830", true);
+		listPix.add(pix);
+		listCC.add(cc);
+		listCP.add(cp);
 
 	}
 
 	// ADICIONA CONTA CORRENTE AO BD
 	public void adicionaContaCorrente(ContaCorrente cc) {
-		contaCorrente.add(cc);
+		listCC.add(cc);
 	}
 
 	// ADICIONA CONTA POUPANCA AO BD
 	public void adicionaContaPoupanca(ContaPoupanca cp) {
-		contaPoupanca.add(cp);
+		listCP.add(cp);
 	}
 
-	// IDENTIFICA CONTA NO BD APARTIR DO NUMERO DA CONTA 
-	public static Conta identificaContaNum(String numDesti) {
-		for (int i = 0; i < contaPoupanca.size(); i++) {
-			if (contaPoupanca.get(i).getNumero().equals(numDesti)) {
+	// CRIA CHAVE PIX
+	public boolean cadastraChavePix(int idCC, int idCP, TipoChavePix tipoChavePix, String conteudoChave, boolean b) {
+		if (identificaPixExistente(conteudoChave)) {
+			System.out.println(listPix.size());
+			Pix pix = new Pix(idCC, idCP);
+			pix.ativarChave(tipoChavePix, conteudoChave, b);
+			listPix.add(pix);
+			return true;
+		}
+		return false;
+	}
+
+//	public boolean buscaeTransferePix(String chavePix) {
+//		identificaeRetorna(chavePix);
+//		return false;
+//	}
+//	// IDENTIFICA E RETORNA CHAVE NO BANCO PIX
+//		public static Pix identificaeRetorna(String conteudoChave) {
+//			for (Pix pix : listPix) {
+//				if (pix.conteudoChave.equals(conteudoChave)) {
+//					tipoConta = 2;
+//					return pix;
+//				}
+//			}
+//			return null;
+//		}
+
+	// IDENTIFICA CHAVE NO BANCO PIX
+	public static boolean identificaPixExistente(String conteudoChave) {
+		for (Pix pix : listPix) {
+			if (pix.conteudoChave.equals(conteudoChave)) {
 				tipoConta = 2;
-				return contaPoupanca.get(i);
+				return false;
 			}
 		}
-		for (int i = 0; i < contaCorrente.size(); i++) {
-			if (contaCorrente.get(i).getNumero().equals(numDesti)) {
+		return true;
+	}
+
+	// IDENTIFICA CONTA NO BD APARTIR DO NUMERO DA CONTA
+	public static Conta identificaContaNum(String numDesti) {
+		for (ContaPoupanca cp : listCP) {
+			if (cp.getNumero().equals(numDesti)) {
+				tipoConta = 2;
+				return cp;
+			}
+		}
+		for (ContaCorrente cc : listCC) {
+			if (cc.getNumero().equals(numDesti)) {
 				tipoConta = 1;
-				return contaCorrente.get(i);
+				return cc;
 			}
 		}
 		return null;
 	}
 
+	public static String consultaPix(int idCC, int idCP) {
+//		System.out.println(idCC+"|"+idCP);
+		String chavesPix = "\n--- SUAS CHAVES ---\n\n";
+		for (Pix pix : listPix) {
+			if (pix.idsContas[0] == idCC || pix.idsContas[1] == idCP) {
+				chavesPix += "|TIPO:" + pix.tipoChave.name() + " CHAVE:" + pix.conteudoChave + "\n";
+			}
+		}
+
+		return chavesPix;
+	}
+
 	// VERIFICA EXISTENCIA DO CPF NO BANCO
-	//
 	public static boolean consultaCpfBanco(String cpf) {
 
 		// cria uma instancia do banco e verifica se existe usuario cadastrado
-		for (int i = 0; i < contaCorrente.size(); i++) {
-			if (contaCorrente.get(i).getCliente().getCpf().equals(cpf)) {
+		for (int i = 0; i < listCC.size(); i++) {
+			if (listCC.get(i).getCliente().getCpf().equals(cpf)) {
 				return true;
 			}
 
 		}
-		for (int i = 0; i < contaPoupanca.size(); i++) {
-			if (contaPoupanca.get(i).getCliente().getCpf().equals(cpf)) {
+		for (int i = 0; i < listCP.size(); i++) {
+			if (listCP.get(i).getCliente().getCpf().equals(cpf)) {
 				return true;
 			}
 
@@ -78,10 +138,10 @@ public class BD {
 	// VERIFICA LISTA NO BANCO DE DADOS ESTATICO
 	public ContaCorrente retornaContaCorrente(String cpf, String senha) {
 		// cria uma instancia do banco e verifica se existe usuario cadastrado
-		for (int i = 0; i < contaCorrente.size(); i++) {
-			if (contaCorrente.get(i).getCliente().getCpf().equals(cpf)
-					&& contaCorrente.get(i).getCliente().getSenha().equals(senha)) {
-				return contaCorrente.get(i);
+		for (int i = 0; i < listCC.size(); i++) {
+			if (listCC.get(i).getCliente().getCpf().equals(cpf)
+					&& listCC.get(i).getCliente().getSenha().equals(senha)) {
+				return listCC.get(i);
 			}
 		}
 		return null;
@@ -89,10 +149,10 @@ public class BD {
 
 	// VERIFICA LISTA NO BANCO DE DADOS ESTATICO
 	public ContaPoupanca retornaContaPoupanca(String cpf, String senha) {
-		for (int i = 0; i < contaPoupanca.size(); i++) {
-			if (contaPoupanca.get(i).getCliente().getCpf().equals(cpf)
-					&& contaPoupanca.get(i).getCliente().getSenha().equals(senha)) {
-				return contaPoupanca.get(i);
+		for (int i = 0; i < listCP.size(); i++) {
+			if (listCP.get(i).getCliente().getCpf().equals(cpf)
+					&& listCP.get(i).getCliente().getSenha().equals(senha)) {
+				return listCP.get(i);
 			}
 		}
 		return null;
