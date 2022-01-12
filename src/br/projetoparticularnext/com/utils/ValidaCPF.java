@@ -1,4 +1,4 @@
-package util;
+package br.projetoparticularnext.com.utils;
 
 import java.util.InputMismatchException;
 

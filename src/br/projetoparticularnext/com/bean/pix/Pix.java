@@ -1,9 +1,9 @@
-package model.pix;
+package br.projetoparticularnext.com.bean.pix;
 
 import java.util.Date;
 
-import model.Transacao;
-import model.conta.Conta;
+import br.projetoparticularnext.com.bean.Transacao;
+import br.projetoparticularnext.com.bean.conta.Conta;
 
 public class Pix implements Transacao {
 	public int id;
@@ -12,21 +12,57 @@ public class Pix implements Transacao {
 	public Date data;
 	public String conteudoChave;
 	public boolean isAtivado;
-	//public Conta conta; achei meio confuso esse conta
-	public int[] idsContas = new int[2];//  SETA IDS DA CONTAS 
 	private static int pixCriados = 1;
 
-	public Pix(int idCC, int idCP) {
+	public Pix() {
 		id = novoId();
-		this.idsContas[0] = idCC;
-		this.idsContas[1] = idCP;
 	}
-
+	
 	public boolean ativarChave(TipoChavePix tipoChave, String conteudoChave, boolean isAtivado) {
 		this.tipoChave = tipoChave;
 		this.conteudoChave = conteudoChave;
 		this.isAtivado = isAtivado;
 		return true;
+	}
+
+	public TipoChavePix getTipoChave() {
+		return tipoChave;
+	}
+
+	public void setTipoChave(TipoChavePix tipoChave) {
+		this.tipoChave = tipoChave;
+	}
+
+	public double getValor() {
+		return valor;
+	}
+
+	public void setValor(double valor) {
+		this.valor = valor;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public String getConteudoChave() {
+		return conteudoChave;
+	}
+
+	public void setConteudoChave(String conteudoChave) {
+		this.conteudoChave = conteudoChave;
+	}
+
+	public boolean isAtivado() {
+		return isAtivado;
+	}
+
+	public void setAtivado(boolean isAtivado) {
+		this.isAtivado = isAtivado;
 	}
 
 	private int novoId() {

@@ -1,4 +1,4 @@
-package model;
+package br.projetoparticularnext.com.bean;
 
 public class Endereco {
 	private String cidade;

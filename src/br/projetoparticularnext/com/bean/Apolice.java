@@ -1,6 +1,6 @@
-package model;
+package br.projetoparticularnext.com.bean;
 
-import model.cartao.CartaoCredito;
+import br.projetoparticularnext.com.bean.cartao.CartaoCredito;
 
 public class Apolice {
 	private int nrApolice;

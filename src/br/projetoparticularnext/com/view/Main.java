@@ -1,12 +1,18 @@
-package view;
+package br.projetoparticularnext.com.view;
 
-import model.Endereco;
-import model.pix.TipoChavePix;
-import util.Utils;
-import controller.ControlLogin;
+import br.projetoparticularnext.com.bean.Endereco;
+import br.projetoparticularnext.com.bean.conta.TipoConta;
+import br.projetoparticularnext.com.bo.ClienteBO;
+import br.projetoparticularnext.com.bo.ContaBO;
+import br.projetoparticularnext.com.bo.EnderecoBO;
+import br.projetoparticularnext.com.bo.PixBO;
+import br.projetoparticularnext.com.utils.Banco;
+import br.projetoparticularnext.com.utils.Menus;
+import br.projetoparticularnext.com.utils.Utils;
 
 public class Main {
 	static Utils utils = new Utils();
+	static Banco banco = new Banco();
 	static String cpfConsole = "";
 	static String senha = "";
 	static boolean logado = false; // FLAG
@@ -26,10 +32,10 @@ public class Main {
 
 		while (true) {
 			cpfConsole = utils.lerConsole("|DIGITE SEU CPF:");
-			if (ControlLogin.validarCpf(cpfConsole)) {
-				if (ControlLogin.testaLogin(cpfConsole)) {// Verifica se cpf existe no banco
+			if (ContaBO.validarCpf(cpfConsole)) {
+				if (ContaBO.testaLogin(cpfConsole)) {// Verifica se cpf existe no banco
 					senha = utils.lerConsole("|DIGITE SUA SENHA: ");
-					buscaContaCadastrada(ControlLogin.buscaContaCadastrada(true, cpfConsole, senha));
+					buscaContaCadastrada(ContaBO.buscaContaCadastrada(true, cpfConsole, senha));
 				} else {
 					break;
 				}
@@ -37,7 +43,7 @@ public class Main {
 
 		}
 		System.out.println("|_________________________________|");
-		buscaContaCadastrada(ControlLogin.buscaContaCadastrada(false, cpfConsole, senha));
+		cadastrar();
 	}
 
 // CADASTRA O USUARIO
@@ -64,15 +70,32 @@ public class Main {
 		System.out.println("|1- CONTA CORRRENTE                |\n" + "|2- CONTA POUPANÇA                 |\n"
 				+ "|3- AMBOS(CORRENTE E POUPANÇA)     |");
 		String tipoConta = utils.lerConsole("|DIGITE A OPÇAO:");
-		;
 
 		System.out.println("|_________________________________|");
 
 		// FALTA VALIDAR CAMPOS ANTES DE ENVIAR
-		ControlLogin.cadastrarConta(senha, cpfConsole, rg, nome, email, rua, bairro, numero, cidade, estado, cep,
-				tipoConta);
+		// CADASTRA ENDERECO,CLIENTE E CONTA
+		EnderecoBO enderecoBO = new EnderecoBO(cidade, estado, bairro, numero, rua, cep);
+		identificaECadastraContas(tipoConta, senha, email, cpfConsole, rg, nome, enderecoBO.endereco);
+		Utils.loading("\n\nSALVANDO CLIENTE E CADASTRANDO CONTA"); // EXIBE LOADING NA TELA
 		System.out.println("\n\n>>CLIENTE E CONTA CADASTRADOS COM SUCESSO!<<\n\n");
+		ContaBO.buscaContaCadastrada(true, cpfConsole, senha);// RECUPERA LISTA DE CONTAS DESTE CPF
 		menuPrincipal();
+	}
+
+// IDENTIFICA O TIPO DE CONTA ENUM e cadastra
+	private static void identificaECadastraContas(String tipoConta, String senha, String email, String cpf, String rg,
+			String nome, Endereco endereco) {
+		ClienteBO clienteBO = new ClienteBO(senha, email, cpf, rg, nome, endereco);
+		if (tipoConta.equals("1")) {
+			new ContaBO(clienteBO.cliente, TipoConta.ContaCorrente);
+		} else if (tipoConta.equals("2")) {
+			new ContaBO(clienteBO.cliente, TipoConta.ContaPoupanca);
+		} else if (tipoConta.equals("3")) {
+			new ContaBO(clienteBO.cliente, TipoConta.ContaCorrente);
+			new ContaBO(clienteBO.cliente, TipoConta.ContaPoupanca);
+		}
+
 	}
 
 // EXIBE MENU PRINCIPAL
@@ -80,32 +103,22 @@ public class Main {
 // SAIR)
 	private static void menuPrincipal() {
 
-		System.out.println(ControlLogin.exibeDetalhesConta());
-		System.out.println(" _________________________________ ");
-		System.out.println("|--------  MENU PRINCIPAL  -------|");
-		System.out.println("|1 - TRANSFERIR                   |");
-		System.out.println("|2 - DEPOSITAR                    |");
-		System.out.println("|3 - CONSULTAR SALDO              |");
-		System.out.println("|4 - SACAR                        |");
-		System.out.println("|5 - PIX                          |");
-		System.out.println("|0 - SAIR                         |");
-		System.out.println("|_________________________________|");
-		buscaOperacaoPrincipal();
-	}
+		ContaBO.TaxaseRendimentos();// consulta taxas e rendimentos e seta valores /mes
 
-	private static void buscaOperacaoPrincipal() {
 		boolean loop = true;
 		while (loop) {
-			int operacao = Integer.parseInt(utils.lerConsole("|DIGITE A OPERAÇÃO: "));
+			Menus.exibeOpcoesConta();// EXIBE DETALHES CONTA E MENU PRINCIPAL
+			String operacao = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
 
 			switch (operacao) {
-			case 1: { // transferencia
+			case "1": { //transferencia
 				while (true) {
 					String numDestino = utils.lerConsole("DIGITE O NUMERO DA CONTA DESTINO: ");
 					double valorDeTransferencia = Double
 							.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA TRANSFERIR: "));
-					String[] resposta = ControlLogin.buscaContaeTransfere(numDestino, valorDeTransferencia,
-							exibeOpcao("QUAL CONTA?"));
+					String[] resposta = ContaBO.buscaContaeTransfere(numDestino, valorDeTransferencia,
+							Menus.exibeOpcao("QUAL CONTA?"));
+					Utils.loading("TRANSFERINDO"); // EXIBE LOADING NA TELA
 					System.out.println(resposta[0]);// Exibe resposta do control
 					if (resposta[1].equals("0")) {
 						menuPrincipal();
@@ -114,67 +127,60 @@ public class Main {
 				}
 				break;
 			}
-			case 2: { // deposito
+			case "2": { // deposito
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
-					if (ControlLogin.depositaNaConta(exibeOpcao("QUAL CONTA?"))) {
+					if (ContaBO.depositaNaConta(Menus.exibeOpcao("QUAL CONTA?"))) {
+						Utils.loading("\n\nDEPOSITANDO"); // EXIBE LOADING NA TELA
 						System.out.println("\n\n>>DEPOSITO REALIZADO COM SUCESSO!<< \n\n");
 						menuPrincipal();
 						break;
 					} else {
+						Utils.loading("\n\nSACANDO"); // EXIBE LOADING NA TELA
 						System.err.println("\n>>ERRO NO DEPOSITO!<< \n");
 					}
 				}
 				break;
 			}
-			case 3: { // saldo
-				System.out.println(ControlLogin.consultaSaldo(exibeOpcao("QUAL CONTA?")));
+			case "3": { // saldo
+				System.out.println(ContaBO.consultaSaldo(Menus.exibeOpcao("QUAL CONTA?")));
 				break;
 			}
-			case 4: { // saque
+			case "4": { // saque
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
-					if (ControlLogin.saqueConta(exibeOpcao("QUAL CONTA?"))) {
+					if (ContaBO.saqueConta(Menus.exibeOpcao("QUAL CONTA?"))) {
+						Utils.loading("\n\nSACANDO"); // EXIBE LOADING NA TELA
 						System.out.println("\n\n>>SAQUE REALIZADO COM SUCESSO!<<");
 						menuPrincipal();
 						break;
 					} else {
+						Utils.loading("\n\nSACANDO"); // EXIBE LOADING NA TELA
 						System.err.println("\n>>SALDO INSUFICIENTE<<\n");
 					}
 				}
 				break;
 			}
-			case 5: { // area pix
-				exibeMenuPix();
+			case "5": { // area pix
+				Menus.exibeMenuPix();
+				String op = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
+				buscaOperacaoPix(op);
 				break;
 			}
-			case 0: { // sair
+			case "0": { // sair
+				Utils.loading("\n\nSAINDO"); // EXIBE LOADING NA TELA
 				System.out.println("\n\n|        LOGOFF CONCLUIDO!        |\n\n"
 						+ "====================================================================================");
-
+				ContaBO.zerarAlocacoesDeMemoria(); // zera os cadastros setados em memória
+				Banco.zerarTodasAsInstanciasBanco();
 				loop = false;
-				ControlLogin.zerarAlocacoesDeMemoria(); // zera os cadastros setados em memória
 				break;
 			}
 			default:
 				System.out.println("|    DIGITE NUMEROS ENTRE 0 E 3   |");
 			}
-			if (!loop)
-				menuInicio();
 		}
-	}
-
-	// EXIBE MENU COM AS OPÇÕES DE PIX
-	private static void exibeMenuPix() {
-		System.out.println(" _________________________________ ");
-		System.out.println("|----------  MENU PIX   ----------|");
-		System.out.println("|1 - CADASTRAR CHAVE PIX          |");
-		System.out.println("|2 - VISUALIZAR CHAVES PIX        |");
-		System.out.println("|3 - TRANSFERIR VIA PIX (INDISP)  |");
-		System.out.println("|0 - VOLTAR AO MENU ANTERIOR      |");
-		System.out.println("|_________________________________|");
-		String op = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
-		buscaOperacaoPix(op);
+		menuInicio();
 	}
 
 	private static void buscaOperacaoPix(String op) {
@@ -187,10 +193,30 @@ public class Main {
 		}
 		case "2": {
 			exibirChavesDisponiveis();
+			break;
 		}
 		case "3": {
-			//tranferirViaPix();
+			String chavePix = utils.lerConsole("DIGITE A CHAVE PIX DE DESTINO: ");
+			double valor = Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA TRANFERIR: "));
+			String[] resposta = PixBO.buscaETRansferePix(chavePix,valor,Menus.exibeOpcao("QUAL CONTA?"));
+			System.out.println(resposta[0]);// Exibe resposta do control
+			if (resposta[1].equals("0")) {
+				menuPrincipal();
+				break;
+			}
 		}
+		case "4": {
+			exibirChavesDisponiveis();
+			int chavePix = Integer.parseInt(utils.lerConsole("DIGITE O ID DE CHAVE: "));
+			if (PixBO.deletarChave(chavePix)) {
+				System.out.println("           >>>PIX REMOVIDO COM SUCESSO!<<<    ");
+				break;
+			}else {
+				System.err.println("           >>>O ID DO PIX NÃO EXISTE!<<<    ");
+			}
+			
+		}
+		
 		case "0": {
 			menuPrincipal();
 		}
@@ -199,59 +225,60 @@ public class Main {
 		}
 
 	}
-//	private static void tranferirViaPix() {
-//		String chavePix = utils.lerConsole("DIGITE A CHAVE PIX DE DESTINO: ");
-//		ControlLogin.buscaETRansferePix(chavePix);
-//	}
 
-	//CPF,Email,Telefone,Aleatorio;
+	// CPF,Email,Telefone,Aleatorio;
 	private static void exibirOpcoesChavesPixCadastro() {
-		while(true) {
-			System.out.println(" _________________");
-			System.out.println("|--- TIPO PIX ----|");
-			System.out.println("|0 - CPF          |");
-			System.out.println("|1 - EMAIL        |");
-			System.out.println("|2 - TELEFONE     |");
-			System.out.println("|3 - ALEATORIO    |");
-			System.out.println("|_________________|");
+		while (true) {
+			Menus.exibeTiposChavesPix();
 			String op = utils.lerConsole("|DIGITE A OPÇÃO: ");
-			if(buscaOperacaoTipoPix(op)) {
+			if (buscaOperacaoTipoPix(op)) {
 				System.out.println("\n   >>CHAVE PIX REGISTRADA COM SUCESSO!<<  ");
 				break;
-			}else {
+			} else {
 				System.out.println("\n   >>ERRO NA CHAVE PIX OU PIX JÁ EXISTE, DIGITE NOVAMENTE!<<  ");
 			}
 		}
 	}
+
 //VERIFICA TIPO DE OPERACAO PIX E RETORNA MSG TOMANDO UMA AÇÃO
-	//int idCC, int idCP, TipoChavePix tipoChavePix, String cpf, boolean b
-	//int tipoChavePix, String conteudoChave,int chave, boolean b
+	// int idCC, int idCP, TipoChavePix tipoChavePix, String cpf, boolean b
+	// int tipoChavePix, String conteudoChave,int chave, boolean b
 	private static boolean buscaOperacaoTipoPix(String op) {
-		
+
 		switch (op) {
 		case "0": {
-			return ControlLogin.cadastraChavePix(0, "CPF", true);
+			return PixBO.cadastraChavePix(0, cpfConsole, true);
 		}
 		case "1": {
 			String email = utils.lerConsole("DIGITE O EMAIL: ");
-			return ControlLogin.cadastraChavePix(1, email, true);
+			return PixBO.cadastraChavePix(1, email, true);
 		}
 		case "2": {
 			String telefone = utils.lerConsole("DIGITE O TELEFONE: ");
-			return ControlLogin.cadastraChavePix(2, telefone, true);
+			return PixBO.cadastraChavePix(2, telefone, true);
 		}
 		case "3": {
-			return ControlLogin.cadastraChavePix(3, "", true);
+			return PixBO.cadastraChavePix(3, "", true);
 		}
 		default:
 			System.out.println("DIGITE VALORES ENTRE 0 E 3");
 			return false;
 		}
-	
-}
+
+	}
 
 	private static void exibirChavesDisponiveis() {
-		System.out.println(ControlLogin.exibirChavesPix());
+		String textoCompleto = "";
+		if (ContaBO.cc != null && ContaBO.cp != null) {
+			textoCompleto = PixBO.exibirChavesPix(ContaBO.cc.getNumero(), ContaBO.cp.getNumero());
+			System.out.println(textoCompleto);
+		} else if (ContaBO.cc != null) {
+			textoCompleto = PixBO.exibirChavesPix(ContaBO.cc.getNumero(), "0");
+			System.out.println(textoCompleto);
+		} else if (ContaBO.cp != null) {
+			textoCompleto = PixBO.exibirChavesPix("0", ContaBO.cp.getNumero());
+			System.out.println(textoCompleto);
+		}
 	}
 
 	// VERIFICA O BANCO SE CONTEM CONTA E EXIBE A INFORMAÇÃO
@@ -272,32 +299,12 @@ public class Main {
 		System.out.println("|-------  RECUPERACAO SENHA  -----|");
 		while (true) {
 			String emailRecuperar = utils.lerConsole("|DIGITE O EMAIL CADASTRADO: ");
-			if (ControlLogin.recuperaSenha(emailRecuperar)) {
+			if (ClienteBO.recuperaSenha(emailRecuperar)) {
 				System.out.println("\n\n|        RECUPERAÇÃO DE SENHA ENVIADA COM SUCESSO!        |\n\n");
 				break;
 			}
 		}
 		System.out.println("|_________________________________|");
-
-	}
-
-	// EXIBE SAIR PARA OUTRO MENU
-	private static boolean exibeOpcao(String titulo) {
-		if (ControlLogin.id == 3) {
-			System.out.println("-------  " + titulo + "  -----");
-			String resposta = utils.lerConsole("| 0 - CORRENTE | 1 - POUPANCA |" + "\n|DIGITE A OPÇÃO:");
-			if (resposta.equals("0")) {
-				System.out.println("|___________________________  |");
-				return false;
-			} else {
-				return true;
-			}
-		} else if (ControlLogin.id == 2) {
-			return true;
-		} else if (ControlLogin.id == 1) {
-			return false;
-		}
-		return true;
 
 	}
 

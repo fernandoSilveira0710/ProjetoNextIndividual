@@ -1,4 +1,4 @@
-package model.cartao;
+package br.projetoparticularnext.com.bean.cartao;
 
 import java.util.Date;
 

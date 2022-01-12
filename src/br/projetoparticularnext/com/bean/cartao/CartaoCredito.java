@@ -1,6 +1,6 @@
-package model.cartao;
+package br.projetoparticularnext.com.bean.cartao;
 
-import model.conta.Conta;
+import br.projetoparticularnext.com.bean.conta.Conta;
 
 public class CartaoCredito extends Cartao{
 

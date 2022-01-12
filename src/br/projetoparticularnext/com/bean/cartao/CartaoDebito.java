@@ -1,4 +1,4 @@
-package model.cartao;
+package br.projetoparticularnext.com.bean.cartao;
 
 public class CartaoDebito extends Cartao {
 	private double limitePorTransacao;

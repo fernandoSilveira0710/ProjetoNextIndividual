@@ -1,6 +1,6 @@
-package model.cliente;
+package br.projetoparticularnext.com.bean.cliente;
 
-import model.Endereco;
+import br.projetoparticularnext.com.bean.Endereco;
 
 public class Cliente {
 	private String cpf;
