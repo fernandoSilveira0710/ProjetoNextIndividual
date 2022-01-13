@@ -107,6 +107,7 @@ public class Main {
 
 		boolean loop = true;
 		while (loop) {
+			System.out.println(ContaBO.exibeDetalhesConta());// BUSCA DETALHES CONTA
 			Menus.exibeOpcoesConta();// EXIBE DETALHES CONTA E MENU PRINCIPAL
 			String operacao = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
 

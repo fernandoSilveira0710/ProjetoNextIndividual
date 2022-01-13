@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.projetoparticularnext.com.bean.cliente.Cliente;
+import br.projetoparticularnext.com.bean.cliente.TipoCliente;
 import br.projetoparticularnext.com.bean.conta.Conta;
 import br.projetoparticularnext.com.bean.conta.TipoConta;
 import br.projetoparticularnext.com.utils.Banco;
@@ -26,6 +27,17 @@ public class ContaBO {
 
 	public ContaBO(Cliente cliente, TipoConta tipoConta) {
 		cadastraConta(cliente, tipoConta);
+	}
+
+	// CADASTRA CLIENTE
+	private void cadastraConta(Cliente cliente, TipoConta tipoConta) {
+		if (tipoConta.name().equals("ContaCorrente")) {
+			cc = new Conta(cliente, tipoConta);
+			Banco.cadastraConta(cc.getNumero(), cc);
+		} else {
+			cp = new Conta(cliente, tipoConta);
+			Banco.cadastraConta(cp.getNumero(), cp);
+		}
 	}
 
 	// DEBITA E CREDITA COM BASE NA CONTA
@@ -55,12 +67,6 @@ public class ContaBO {
 
 	}
 
-//CADASTRA CLIENTE
-	private void cadastraConta(Cliente cliente, TipoConta tipoConta) {
-		Conta conta = new Conta(cliente, tipoConta);
-		Banco.cadastraConta(conta.getNumero(), conta);
-	}
-
 	// VERIFICA SE SENHA É COMPATIVEL COM CONTA
 	public static boolean testaLogin(String cpfConsole) {
 		if (Banco.consultaCpfBanco(cpfConsole)) {
@@ -80,13 +86,13 @@ public class ContaBO {
 				tipo++;
 				cc = conta; // SETA CONTA EM CONTA CORRENTE
 				retorno += "\n>>NUMERO CORRENTE: " + conta.getNumero() + "\n>>SALDO CORRENTE:"
-						+ utils.convertToReais(conta.consultarSaldo());
+						+ utils.convertToReais(consultarSaldo(conta));
 			}
 			if (conta.getTipoConta() == TipoConta.ContaPoupanca) {
 				id = 2;
 				cp = conta; // SETA CONTA EM CONTA POUPANCA
 				retorno += "\n>>NUMERO POUPANÇA: " + conta.getNumero() + "\n>>SALDO POUPANÇA:"
-						+ utils.convertToReais(conta.consultarSaldo());
+						+ utils.convertToReais(consultarSaldo(conta));
 				tipo++;
 			}
 			if (conta.getTipoConta() == TipoConta.ContaCorrente && conta.getTipoConta() == TipoConta.ContaPoupanca) {
@@ -144,7 +150,7 @@ public class ContaBO {
 		Conta contaDestino = consultaContaDestinoExistente(numDestino);
 		double taxa = 5.6;
 		boolean verifica = false;
-		transfereEntreContas("TRANSFERENCIA",valorDeTransferencia, tipo, resposta, contaDestino, taxa, verifica);
+		transfereEntreContas("TRANSFERENCIA", valorDeTransferencia, tipo, resposta, contaDestino, taxa, verifica);
 		return resposta;
 	}
 
@@ -152,35 +158,36 @@ public class ContaBO {
 			String[] resposta, Conta contaDestino, double taxa, boolean verifica) {
 		if (contaDestino != null) {
 			if (!tipo && contaDestino.getTipoConta().ordinal() == 0) {
-				verifica = cc.transferir(contaDestino, valorDeTransferencia);
+				verifica = transferir(contaDestino, valorDeTransferencia,cc);
 			} else if (!tipo && contaDestino.getTipoConta().ordinal() == 1) {
-				if ((cc.consultarSaldo() - taxa) >= valorDeTransferencia) {
-					cc.saque(5.60);// DESCONTA TAXA
-					verifica = cc.transferir(contaDestino, valorDeTransferencia);
+				if ((consultarSaldo(cc) - taxa) >= valorDeTransferencia) {
+					saque(5.60,cc);// DESCONTA TAXA
+					verifica = transferir(contaDestino, valorDeTransferencia,cc);
 					resposta[0] = "TAXA DE R$" + taxa + " FOI APLICADA POR SE TRATAR DE CONTAS DIFERENTES";
 				} else {
-					resposta[0] = "LEMBRE-SE QUE A TAXA DE R$" + taxa
-							+ " É APLICADA A SUA "+tipoTransferencia+" ENTRE CONTAS DIFERENTES!";
+					resposta[0] = "LEMBRE-SE QUE A TAXA DE R$" + taxa + " É APLICADA A SUA " + tipoTransferencia
+							+ " ENTRE CONTAS DIFERENTES!";
 
 				}
 			} else if (tipo && contaDestino.getTipoConta().ordinal() == 1) {
-				if ((cp.consultarSaldo() - taxa) >= valorDeTransferencia) {
-					cp.saque(5.60);// DESCONTA TAXA
-					verifica = cp.transferir(contaDestino, valorDeTransferencia);
+				if ((consultarSaldo(cp) - taxa) >= valorDeTransferencia) {
+					saque(5.60,cp);// DESCONTA TAXA
+					verifica = transferir(contaDestino, valorDeTransferencia,cp);
 					resposta[0] = "TAXA DE R$" + taxa + " FOI APLICADA POR SE TRATAR DE CONTAS DIFERENTES";
 				} else {
-					resposta[0] = "LEMBRE-SE QUE A TAXA DE R$" + taxa
-							+ " É APLICADA A SUA "+tipoTransferencia+" ENTRE CONTAS DIFERENTES!";
+					resposta[0] = "LEMBRE-SE QUE A TAXA DE R$" + taxa + " É APLICADA A SUA " + tipoTransferencia
+							+ " ENTRE CONTAS DIFERENTES!";
 				}
 			} else if (tipo && contaDestino.getTipoConta().ordinal() == 0) {
-				verifica = cp.transferir(contaDestino, valorDeTransferencia);
+				verifica = transferir(contaDestino, valorDeTransferencia,cp);
 			}
 			if (verifica) {
-			resposta[0] += "\n>>"+tipoTransferencia+" DE " + utils.convertToReais(valorDeTransferencia) + "\n PARA "
-						+ contaDestino.getCliente().getNome().toUpperCase() + " REALIZADO COM SUCESSO<< \n\n";
+				resposta[0] += "\n>>" + tipoTransferencia + " DE " + utils.convertToReais(valorDeTransferencia)
+						+ "\n PARA " + contaDestino.getCliente().getNome().toUpperCase()
+						+ " REALIZADO COM SUCESSO<< \n\n";
 				resposta[1] = "0";
 			} else {
-				resposta[0] += "\nERRO EM "+tipoTransferencia+"!SALDO INSUFICIENTE \n";
+				resposta[0] += "\nERRO EM " + tipoTransferencia + "!SALDO INSUFICIENTE \n";
 				resposta[1] = "1";
 			}
 		} else {
@@ -192,28 +199,71 @@ public class ContaBO {
 	// DEPOSITA EM CONTA
 	public static boolean depositaNaConta(boolean b) {
 		if (!b) {
-			return cc.depositar(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA DEPOSITAR: ")));
+			return depositar(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA DEPOSITAR: ")), cc);
 		} else {
-			return cp.depositar(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA DEPOSITAR: ")));
+			return depositar(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA DEPOSITAR: ")), cp);
 		}
 
+	}
+	//DEPOSITA DA CONTA SETADA
+	public static boolean depositar(double valDeposito, Conta c) {
+		double saldoComDeposito = c.getSaldo() + valDeposito;
+		c.setSaldo(saldoComDeposito);
+		verificaTipoConta(c);
+		return true;
+	}
+
+//RECEBE CONTA E VERIFICA SE MUDA PARA OUTRO TIPO
+	public static void verificaTipoConta(Conta c) {
+		if (c.getSaldo() <= 5000) {
+			c.getCliente().setTipo(TipoCliente.COMUM);
+		} else if (c.getSaldo() >= 5000 && c.getSaldo() < 15000) {
+			c.getCliente().setTipo(TipoCliente.SUPER);
+		} else
+			c.getCliente().setTipo(TipoCliente.PREMIUM);
 	}
 
 	// RETORNA SALDO
 	public static String consultaSaldo(boolean b) {
 		if (!b) {
-			return "\n>>SALDO DISPONIVEL: " + utils.convertToReais(cc.consultarSaldo()) + "<<\n";
+			return "\n>>SALDO DISPONIVEL: " + utils.convertToReais(consultarSaldo(cc)) + "<<\n";
 		} else {
-			return "\n>>SALDO DISPONIVEL: " + utils.convertToReais(cp.consultarSaldo()) + "<<\n";
+			return "\n>>SALDO DISPONIVEL: " + utils.convertToReais(consultarSaldo(cp)) + "<<\n";
 		}
+	}
+	//SACA DA CONTA RECBIDA
+	public static boolean saque(double valor, Conta c) {
+		if (c.getSaldo() >= valor) {
+			double saldoComSaque = c.getSaldo() - valor;
+			c.setSaldo(saldoComSaque);
+			verificaTipoConta(c);
+			return true;
+		} else
+			return false;
+	}
+	//TRANSFERE DE CONTA X PARA CONTA Y
+	public static boolean transferir(Conta contaDestino, double valTransferencia, Conta c) {
+		if (c.getSaldo() >= valTransferencia) {
+			contaDestino.setSaldo(contaDestino.getSaldo() + valTransferencia);
+			c.setSaldo(c.getSaldo() - valTransferencia);
+			verificaTipoConta(c);
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+	//retorna saldo
+	public static double consultarSaldo(Conta c) {
+		return c.getSaldo();
 	}
 
 	// SAQUE EM CONTA
 	public static boolean saqueConta(boolean b) {
 		if (!b) {
-			return cc.saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")));
+			return saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")),cc);
 		} else {
-			return cp.saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")));
+			return saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")),cp);
 		}
 
 	}

@@ -47,7 +47,6 @@ public class Menus {
 		}
 
 		public static void exibeOpcoesConta() {
-			System.out.println(ContaBO.exibeDetalhesConta());
 			System.out.println(" _________________________________ ");
 			System.out.println("|--------  MENU PRINCIPAL  -------|");
 			System.out.println("|1 - TRANSFERIR                   |");

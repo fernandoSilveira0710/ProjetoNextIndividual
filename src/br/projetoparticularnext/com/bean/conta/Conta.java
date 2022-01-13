@@ -10,10 +10,10 @@ import br.projetoparticularnext.com.bean.pix.Pix;
 import br.projetoparticularnext.com.utils.Utils;
 
 public class Conta {
-	protected int id;
-	protected String numero;
-	protected double saldo;
-	protected Cliente cliente;
+	private int id;
+	private String numero;
+	private double saldo;
+	private Cliente cliente;
 	private static int contasCriadas = 1;
 	private TipoConta tipoConta;
 	private List<Pix> listPix;
@@ -36,7 +36,6 @@ public class Conta {
 		this.tipoConta = tipoConta;
 		this.data = Utils.dataAtual();
 	}
-
 	private int novoId() {
 		return contasCriadas++;
 	}
@@ -79,47 +78,6 @@ public class Conta {
 
 	public double getSaldo() {
 		return saldo;
-	}
-
-//	VERIFICA TIPO DE CONTA A CADA OPERAÇÃO
-	public void verificaTipoConta() {
-		if (this.getSaldo() <= 5000) {
-			this.getCliente().setTipo(TipoCliente.COMUM);
-		} else if (saldo >= 5000 && saldo < 15000) {
-			this.getCliente().setTipo(TipoCliente.SUPER);
-		} else
-			this.getCliente().setTipo(TipoCliente.PREMIUM);
-	}
-
-	public boolean saque(double valor) {
-		if (this.getSaldo() >= valor) {
-			this.saldo -= valor;
-			verificaTipoConta();
-			return true;
-		} else
-			return false;
-	}
-
-	public boolean transferir(Conta contaDestino, double valTransferencia) {
-		if (this.getSaldo() >= valTransferencia) {
-			contaDestino.setSaldo(contaDestino.getSaldo() + valTransferencia);
-			this.setSaldo(this.getSaldo() - valTransferencia);
-			verificaTipoConta();
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	public boolean depositar(double valDeposito) {
-		this.saldo += valDeposito;
-		verificaTipoConta();
-		return true;
-	}
-
-	public double consultarSaldo() {
-		return this.getSaldo();
 	}
 
 	public Date getData() {
