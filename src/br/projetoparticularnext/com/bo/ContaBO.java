@@ -43,7 +43,7 @@ public class ContaBO {
 	// DEBITA E CREDITA COM BASE NA CONTA
 	public static void TaxaseRendimentos() {
 		if (cc != null) {
-			if (cc.getData().before(new Date())) {
+			if (cc.getData().equals(Utils.dataAtual())) {
 				double valor = cc.getSaldo();
 				double taxa = valor * (0.45 / 100);
 				valor -= taxa;
@@ -53,7 +53,7 @@ public class ContaBO {
 				System.out.println("PRÓXIMO MÊS DE COBRANÇA: " + cc.getData());
 			}
 		} else if (cp != null) {
-			if (cp.getData().before(new Date())) {
+			if (cp.getData().equals(Utils.dataAtual())) {
 				double valor = cp.getSaldo();
 				double taxa = valor * (0.03 / 100);
 				valor += taxa;
@@ -80,18 +80,24 @@ public class ContaBO {
 	public static String exibeDetalhesConta() {
 		int tipo = 0;
 		String retorno = "";
+		int cont = 0;
 		for (Conta conta : listConta) {
+			if(cont == 0) {
+				retorno += "\n\n>>SEJA BEM VINDO "+conta.getCliente().getNome().toUpperCase()
+						+"    >>TIPO CONTA: "+conta.getCliente().getTipo().name().toUpperCase();
+				cont++;
+			}
 			if (conta.getTipoConta() == TipoConta.ContaCorrente) {
 				id = 1;
 				tipo++;
 				cc = conta; // SETA CONTA EM CONTA CORRENTE
-				retorno += "\n>>NUMERO CORRENTE: " + conta.getNumero() + "\n>>SALDO CORRENTE:"
+				retorno += "\n>>NUMERO CORRENTE: " + conta.getNumero() + "    >>SALDO CORRENTE:"
 						+ utils.convertToReais(consultarSaldo(conta));
 			}
 			if (conta.getTipoConta() == TipoConta.ContaPoupanca) {
 				id = 2;
 				cp = conta; // SETA CONTA EM CONTA POUPANCA
-				retorno += "\n>>NUMERO POUPANÇA: " + conta.getNumero() + "\n>>SALDO POUPANÇA:"
+				retorno += "\n>>NUMERO POUPANÇA: " + conta.getNumero() + "    >>SALDO POUPANÇA:"
 						+ utils.convertToReais(consultarSaldo(conta));
 				tipo++;
 			}
@@ -158,11 +164,11 @@ public class ContaBO {
 			String[] resposta, Conta contaDestino, double taxa, boolean verifica) {
 		if (contaDestino != null) {
 			if (!tipo && contaDestino.getTipoConta().ordinal() == 0) {
-				verifica = transferir(contaDestino, valorDeTransferencia,cc);
+				verifica = transferir(contaDestino, valorDeTransferencia, cc);
 			} else if (!tipo && contaDestino.getTipoConta().ordinal() == 1) {
 				if ((consultarSaldo(cc) - taxa) >= valorDeTransferencia) {
-					saque(5.60,cc);// DESCONTA TAXA
-					verifica = transferir(contaDestino, valorDeTransferencia,cc);
+					saque(5.60, cc);// DESCONTA TAXA
+					verifica = transferir(contaDestino, valorDeTransferencia, cc);
 					resposta[0] = "TAXA DE R$" + taxa + " FOI APLICADA POR SE TRATAR DE CONTAS DIFERENTES";
 				} else {
 					resposta[0] = "LEMBRE-SE QUE A TAXA DE R$" + taxa + " É APLICADA A SUA " + tipoTransferencia
@@ -171,15 +177,15 @@ public class ContaBO {
 				}
 			} else if (tipo && contaDestino.getTipoConta().ordinal() == 1) {
 				if ((consultarSaldo(cp) - taxa) >= valorDeTransferencia) {
-					saque(5.60,cp);// DESCONTA TAXA
-					verifica = transferir(contaDestino, valorDeTransferencia,cp);
+					saque(5.60, cp);// DESCONTA TAXA
+					verifica = transferir(contaDestino, valorDeTransferencia, cp);
 					resposta[0] = "TAXA DE R$" + taxa + " FOI APLICADA POR SE TRATAR DE CONTAS DIFERENTES";
 				} else {
 					resposta[0] = "LEMBRE-SE QUE A TAXA DE R$" + taxa + " É APLICADA A SUA " + tipoTransferencia
 							+ " ENTRE CONTAS DIFERENTES!";
 				}
 			} else if (tipo && contaDestino.getTipoConta().ordinal() == 0) {
-				verifica = transferir(contaDestino, valorDeTransferencia,cp);
+				verifica = transferir(contaDestino, valorDeTransferencia, cp);
 			}
 			if (verifica) {
 				resposta[0] += "\n>>" + tipoTransferencia + " DE " + utils.convertToReais(valorDeTransferencia)
@@ -205,7 +211,8 @@ public class ContaBO {
 		}
 
 	}
-	//DEPOSITA DA CONTA SETADA
+
+	// DEPOSITA DA CONTA SETADA
 	public static boolean depositar(double valDeposito, Conta c) {
 		double saldoComDeposito = c.getSaldo() + valDeposito;
 		c.setSaldo(saldoComDeposito);
@@ -214,13 +221,17 @@ public class ContaBO {
 	}
 
 //RECEBE CONTA E VERIFICA SE MUDA PARA OUTRO TIPO
-	public static void verificaTipoConta(Conta c) {
+	public static double verificaTipoConta(Conta c) {
 		if (c.getSaldo() <= 5000) {
 			c.getCliente().setTipo(TipoCliente.COMUM);
+			return c.getCliente().getTipo().getLimite();
 		} else if (c.getSaldo() >= 5000 && c.getSaldo() < 15000) {
 			c.getCliente().setTipo(TipoCliente.SUPER);
-		} else
+			return c.getCliente().getTipo().getLimite();
+		} else {
 			c.getCliente().setTipo(TipoCliente.PREMIUM);
+			return c.getCliente().getTipo().getLimite();
+		}
 	}
 
 	// RETORNA SALDO
@@ -231,7 +242,8 @@ public class ContaBO {
 			return "\n>>SALDO DISPONIVEL: " + utils.convertToReais(consultarSaldo(cp)) + "<<\n";
 		}
 	}
-	//SACA DA CONTA RECBIDA
+
+	// SACA DA CONTA RECBIDA
 	public static boolean saque(double valor, Conta c) {
 		if (c.getSaldo() >= valor) {
 			double saldoComSaque = c.getSaldo() - valor;
@@ -241,7 +253,8 @@ public class ContaBO {
 		} else
 			return false;
 	}
-	//TRANSFERE DE CONTA X PARA CONTA Y
+
+	// TRANSFERE DE CONTA X PARA CONTA Y
 	public static boolean transferir(Conta contaDestino, double valTransferencia, Conta c) {
 		if (c.getSaldo() >= valTransferencia) {
 			contaDestino.setSaldo(contaDestino.getSaldo() + valTransferencia);
@@ -253,7 +266,8 @@ public class ContaBO {
 		}
 
 	}
-	//retorna saldo
+
+	// retorna saldo
 	public static double consultarSaldo(Conta c) {
 		return c.getSaldo();
 	}
@@ -261,9 +275,9 @@ public class ContaBO {
 	// SAQUE EM CONTA
 	public static boolean saqueConta(boolean b) {
 		if (!b) {
-			return saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")),cc);
+			return saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")), cc);
 		} else {
-			return saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")),cp);
+			return saque(Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA SACAR: ")), cp);
 		}
 
 	}
@@ -295,6 +309,20 @@ public class ContaBO {
 		cc = null;
 		cp = null;
 		id = 0;
+	}
+
+//verifica a conta com base na conta existente e retorna o limite
+	public static double buscaLimiteConta() {
+		if (cc != null) {
+			double limite = verificaTipoConta(cc);
+			System.out.println("\n    >>LIMITE PRÉ APROVADO DE " + Utils.convertToReais(limite) + "<<    ");
+			return limite;
+		} else {
+			double limite = verificaTipoConta(cp);
+			System.out.println("\n    >>LIMITE PRÉ APROVADO DE " + Utils.convertToReais(limite) + "<<    ");
+			return limite;
+
+		}
 	}
 
 }

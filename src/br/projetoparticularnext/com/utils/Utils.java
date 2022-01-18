@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -34,18 +35,26 @@ public class Utils {
 	}
 
 	// RETORNA DATA ATUAL
-	public static Date dataAtual() {
-		Date dataAtual = new Date();
-		return dataAtual;
+	public static String dataAtual() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		return sdf.format(Calendar.getInstance().getTime());
 	}
 
-	// ADD UM MES A DATA
-	public static Date getDateAdd1Month() {
+	// ADD UM MES A DATA  15/05/05
+	public static String getDateAdd1Month() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, 1);
-		Date date = calendar.getTime();
-		return date;
+		return sdf.format(calendar.getTime());
 	}
+	// ADD UM MES A DATA
+		public static String returnDataDiaDefinido(String dataSemFormatar) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.MONTH, 1);
+			calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dataSemFormatar));
+			return sdf.format(calendar.getTime());
+		}
 
 	// Método sleep em 200 milisegundos
 	public static void sleep() {
@@ -67,6 +76,15 @@ public class Utils {
 		}
 		System.out.println();
 		sleep();
+	}
+	// GERADOR DE BLOCOS DE NUMEROS ALEATÓRIOS
+	public static String geraBlocosNumeros(int qtd) {
+		 Random r = new Random();
+		 String randomNumber = "";
+		   for(int x = 0;x <= 4; x++) {
+			    randomNumber += String.format(" "+"%0"+qtd+"d", r.nextInt(1001));
+		   }
+		    return randomNumber;
 	}
 
 }

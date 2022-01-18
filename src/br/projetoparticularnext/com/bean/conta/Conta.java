@@ -1,11 +1,13 @@
 package br.projetoparticularnext.com.bean.conta;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import br.projetoparticularnext.com.bean.cartao.CartaoCredito;
+import br.projetoparticularnext.com.bean.cartao.CartaoDebito;
 import br.projetoparticularnext.com.bean.cliente.Cliente;
-import br.projetoparticularnext.com.bean.cliente.TipoCliente;
 import br.projetoparticularnext.com.bean.pix.Pix;
 import br.projetoparticularnext.com.utils.Utils;
 
@@ -17,7 +19,10 @@ public class Conta {
 	private static int contasCriadas = 1;
 	private TipoConta tipoConta;
 	private List<Pix> listPix;
-	private Date data;
+//	private List<Cartao> cartoes;
+	private CartaoCredito credito;
+	private CartaoDebito debito;
+	private String data;
 
 	public List<Pix> getListPix() {
 		return listPix;
@@ -36,6 +41,7 @@ public class Conta {
 		this.tipoConta = tipoConta;
 		this.data = Utils.dataAtual();
 	}
+
 	private int novoId() {
 		return contasCriadas++;
 	}
@@ -80,12 +86,30 @@ public class Conta {
 		return saldo;
 	}
 
-	public Date getData() {
+	public String getData() {
 		return data;
 	}
 
-	public void setData(Date data) {
+	public void setData(String data) {
 		this.data = data;
 	}
+
+	public CartaoCredito getCredito() {
+		return credito;
+	}
+
+	public void setCredito(CartaoCredito credito) {
+		this.credito = credito;
+	}
+
+	public CartaoDebito getDebito() {
+		return debito;
+	}
+
+	public void setDebito(CartaoDebito debito) {
+		this.debito = debito;
+	}
+	
+	
 
 }
