@@ -29,7 +29,6 @@ public class Menus {
 
 	// EXIBE SAIR PARA OUTRO MENU
 	public static boolean exibeOpcaoConta(String titulo) {
-		System.out.println(ContaBO.id);
 		if (ContaBO.id == 3) {
 			System.out.println("-------  " + titulo + "  -----");
 			String resposta = utils.lerConsole("| 0 - CORRENTE | 1 - POUPANCA |" + "\n|DIGITE A OPÇÃO:");
@@ -49,17 +48,13 @@ public class Menus {
 	}
 
 	public static void exibeOpcoesConta() {
-		System.out.println(" _________________________________ ");
-		System.out.println("|--------  MENU PRINCIPAL  -------|");
-		System.out.println("|1 - TRANSFERIR                   |");
-		System.out.println("|2 - DEPOSITAR                    |");
-		System.out.println("|3 - CONSULTAR SALDO              |");
-		System.out.println("|4 - SACAR                        |");
-		System.out.println("|5 - PIX                          |");
-		System.out.println("|6 - CARTÃO DE CRÉDITO            |");
-		System.out.println("|7 - CARTÃO DE DÉBITO             |");
-		System.out.println("|0 - SAIR                         |");
-		System.out.println("|_________________________________|");
+		System.out.println(" ___________________________________");
+		System.out.println("|--------  MENU PRINCIPAL  ---------|");
+		System.out.println("|1 - TRANSFERIR        2 - DEPOSITO |");
+		System.out.println("|3 - CONSULTAR SALDO   4 - SACAR    |");
+		System.out.println("|5 - CRÉDITO           6 - DÉBITO   |");
+		System.out.println("|7 - PIX               0 - SAIR     |");
+		System.out.println("|___________________________________|");
 	}
 
 	// EXIBE OPÇOES DE CARTÕES
@@ -137,8 +132,4 @@ public class Menus {
 		System.out.println(" _________________________");
 		System.out.println("|------ NOVA COMPRA ------|");
 	}
-	
-	
-		
-
 }

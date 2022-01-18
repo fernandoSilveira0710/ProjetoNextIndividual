@@ -13,9 +13,9 @@ public class CartaoBO {
 	// cadastra cartão de crédito ou débito
 	// String bandeira, String senha, boolean isAtivo, double limite => CARTAO
 	// CREDITO CONTRUTOR
-	public static boolean cadastraCartaoCredito(String bandeira, long senha, boolean isAtivo, String dataVencimento) {
+	public static boolean cadastraCartaoCredito(String bandeira, String senha, boolean isAtivo, String dataVencimento) {
 		double limite = ContaBO.buscaLimiteConta();
-		CartaoCredito credito = new CartaoCredito(bandeira, String.valueOf(senha), isAtivo, limite, dataVencimento);
+		CartaoCredito credito = new CartaoCredito(bandeira, senha, isAtivo, limite, dataVencimento);
 		if (Banco.cadastraCartaoCredito(credito)) {
 			return true;
 		} else
@@ -24,9 +24,9 @@ public class CartaoBO {
 	}
 
 	// String bandeira, String senha, boolean isAtivo, double limitePorTransacao
-	public static boolean cadastraCartaoDebito(String bandeira, long senha, boolean isAtivo,
+	public static boolean cadastraCartaoDebito(String bandeira, String senha, boolean isAtivo,
 			double limitePorTransacao) {
-		CartaoDebito debito = new CartaoDebito(bandeira, String.valueOf(senha), isAtivo, limitePorTransacao);
+		CartaoDebito debito = new CartaoDebito(bandeira,senha, isAtivo, limitePorTransacao);
 		if (Banco.cadastraCartaoDebito(debito)) {
 			return true;
 		} else

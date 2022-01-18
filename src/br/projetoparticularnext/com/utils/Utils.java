@@ -81,7 +81,7 @@ public class Utils {
 	public static String geraBlocosNumeros(int qtd) {
 		 Random r = new Random();
 		 String randomNumber = "";
-		   for(int x = 0;x <= 4; x++) {
+		   for(int x = 0;x < 4; x++) {
 			    randomNumber += String.format(" "+"%0"+qtd+"d", r.nextInt(1001));
 		   }
 		    return randomNumber;

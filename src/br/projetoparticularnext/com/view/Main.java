@@ -30,16 +30,14 @@ public class Main {
 
 // EXIBE MENU LOGIN
 	private static void menuInicio() {
-		System.out.println(" _________________________________ ");
 		System.out.println("|-----BEM VINDO AO BANCO NEXT-----|");
-		System.out.println("|------------  LOGIN  ------------|");
-		System.out.println("|                                 |");
+		System.out.println("|------------  LOGIN  ------------|\n");
 
 		while (true) {
-			cpfConsole = utils.lerConsole("|DIGITE SEU CPF:");
+			cpfConsole = utils.lerConsole("|Digite seu CPF:");
 			if (ContaBO.validarCpf(cpfConsole)) {
 				if (ContaBO.testaLogin(cpfConsole)) {// Verifica se cpf existe no banco
-					senha = utils.lerConsole("|DIGITE SUA SENHA: ");
+					senha = utils.lerConsole("|Digite sua senha: ");
 					buscaContaCadastrada(ContaBO.buscaContaCadastrada(true, cpfConsole, senha));
 				} else {
 					break;
@@ -55,26 +53,26 @@ public class Main {
 	private static void cadastrar() {
 		System.out.println(" _________________________________ ");
 		System.out.println("|----  CADASTRO DADOS BASICOS  ---|");
-		System.out.println("|SEU CPF: " + cpfConsole);
-		String rg = utils.lerConsole("|DIGITE SEU RG: ");
-		String nome = utils.lerConsole("|DIGITE SEU NOME COMPLETO: ");
-		String email = utils.lerConsole("|DIGITE SEU EMAIL: ");
-		senha = utils.lerConsole("DIGITE SUA SENHA: ");
+		System.out.println("|Seu CPF: " + cpfConsole);
+		String rg = utils.lerConsole("|Digite seu RG: ");
+		String nome = utils.lerConsole("|Digite seu nome completo: ");
+		String email = utils.lerConsole("|Digite seu email: ");
+		senha = utils.lerConsole("Digite sua senha: ");
 		System.out.println(" __________________________________ ");
 		System.out.println("|-------  CADASTRO ENDEREÇO  ------|");
-		String rua = utils.lerConsole("|DIGITE SUA RUA: ");
-		String bairro = utils.lerConsole("|DIGITE SEU BAIRRO: ");
-		String numero = utils.lerConsole("|DIGITE SEU NUMERO: ");
-		String cidade = utils.lerConsole("|DIGITE SUA CIDADE: ");
-		String estado = utils.lerConsole("|DIGITE SEU ESTADO: ");
-		String cep = utils.lerConsole("|DIGITE SEU CEP: ");
+		String rua = utils.lerConsole("|Digite sua rua: ");
+		String bairro = utils.lerConsole("|Digite seu bairro: ");
+		String numero = utils.lerConsole("|Digite seu numero: ");
+		String cidade = utils.lerConsole("|Digite sua cidade: ");
+		String estado = utils.lerConsole("|Digite seu estado: ");
+		String cep = utils.lerConsole("|Digite seu cep: ");
 		System.out.println("|_________________________________|");
 
 		System.out.println(" __________________________________ ");
 		System.out.println("|-------  DEFINIR TIPO CONTA  -----|");
-		System.out.println("|1- CONTA CORRRENTE                |\n" + "|2- CONTA POUPANÇA                 |\n"
-				+ "|3- AMBOS(CORRENTE E POUPANÇA)     |");
-		String tipoConta = utils.lerConsole("|DIGITE A OPÇAO:");
+		System.out.println("|1- Conta Corrente                |\n" + "|2- Conta Poupança                 |\n"
+				+ "|3- Ambos(Corrente e Poupança)     |");
+		String tipoConta = utils.lerConsole("|Digite a opção:");
 
 		System.out.println("|_________________________________|");
 
@@ -82,8 +80,8 @@ public class Main {
 		// CADASTRA ENDERECO,CLIENTE E CONTA
 		EnderecoBO enderecoBO = new EnderecoBO(cidade, estado, bairro, numero, rua, cep);
 		identificaECadastraContas(tipoConta, senha, email, cpfConsole, rg, nome, enderecoBO.endereco);
-		Utils.loading("\n\nSALVANDO CLIENTE E CADASTRANDO CONTA"); // EXIBE LOADING NA TELA
-		System.out.println("\n\n>>CLIENTE E CONTA CADASTRADOS COM SUCESSO!<<\n\n");
+		Utils.loading("\n\nSalvando cliente e cadastrando conta"); // EXIBE LOADING NA TELA
+		System.out.println("\n\n>>Cliente e conta cadastrados com sucesso!<<\n\n");
 		ContaBO.buscaContaCadastrada(true, cpfConsole, senha);// RECUPERA LISTA DE CONTAS DESTE CPF
 		menuPrincipal();
 	}
@@ -114,17 +112,17 @@ public class Main {
 		while (loop) {
 			System.out.println(ContaBO.exibeDetalhesConta());// BUSCA DETALHES CONTA
 			Menus.exibeOpcoesConta();// EXIBE DETALHES CONTA E MENU PRINCIPAL
-			String operacao = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
+			String operacao = utils.lerConsole("|Digite sua operação: ");
 
 			switch (operacao) {
 			case "1": { // transferencia
 				while (true) {
-					String numDestino = utils.lerConsole("DIGITE O NUMERO DA CONTA DESTINO: ");
+					String numDestino = utils.lerConsole("Digite o numero da conta destino: ");
 					double valorDeTransferencia = Double
-							.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA TRANSFERIR: "));
+							.parseDouble(utils.lerConsole("Digite o valor que deseja transferir: "));
 					String[] resposta = ContaBO.buscaContaeTransfere(numDestino, valorDeTransferencia,
-							Menus.exibeOpcaoConta("QUAL CONTA?"));
-					Utils.loading("TRANSFERINDO"); // EXIBE LOADING NA TELA
+							Menus.exibeOpcaoConta("Qual conta?"));
+					Utils.loading("\nTransferindo"); // EXIBE LOADING NA TELA
 					System.out.println(resposta[0]);// Exibe resposta do control
 					if (resposta[1].equals("0")) {
 						menuPrincipal();
@@ -136,44 +134,38 @@ public class Main {
 			case "2": { // deposito
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
-					if (ContaBO.depositaNaConta(Menus.exibeOpcaoConta("QUAL CONTA?"))) {
-						Utils.loading("\n\nDEPOSITANDO"); // EXIBE LOADING NA TELA
-						System.out.println("\n\n>>DEPOSITO REALIZADO COM SUCESSO!<< \n\n");
+					if (ContaBO.depositaNaConta(Menus.exibeOpcaoConta("Qual conta?"))) {
+						Utils.loading("\n\nDepositando"); // EXIBE LOADING NA TELA
+						System.out.println("\n\n>>Deposito realizado com sucesso!<< \n\n");
 						menuPrincipal();
 						break;
 					} else {
-						Utils.loading("\n\nSACANDO"); // EXIBE LOADING NA TELA
-						System.err.println("\n>>ERRO NO DEPOSITO!<< \n");
+						Utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
+						System.err.println("\n>>Erro no depósito!<< \n");
 					}
 				}
 				break;
 			}
 			case "3": { // saldo
-				System.out.println(ContaBO.consultaSaldo(Menus.exibeOpcaoConta("QUAL CONTA?")));
+				System.out.println(ContaBO.consultaSaldo(Menus.exibeOpcaoConta("Qual conta?")));
 				break;
 			}
 			case "4": { // saque
 				// solicita valor, envia pro metodo saque que retorna a mensagem
 				while (true) {
-					if (ContaBO.saqueConta(Menus.exibeOpcaoConta("QUAL CONTA?"))) {
-						Utils.loading("\n\nSACANDO"); // EXIBE LOADING NA TELA
-						System.out.println("\n\n>>SAQUE REALIZADO COM SUCESSO!<<");
+					if (ContaBO.saqueConta(Menus.exibeOpcaoConta("Qual conta"))) {
+						Utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
+						System.out.println("\n\n>>Saque realizado com sucesso!<<");
 						menuPrincipal();
 						break;
 					} else {
-						Utils.loading("\n\nSACANDO"); // EXIBE LOADING NA TELA
-						System.err.println("\n>>SALDO INSUFICIENTE<<\n");
+						Utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
+						System.err.println("\n>>Saldo Insuficiente<<\n");
 					}
 				}
 				break;
 			}
-			case "5": { // area pix
-				Menus.exibeMenuPix();
-				String op = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
-				buscaOperacaoPix(op);
-				break;
-			}
-			case "6": { // area crédito
+			case "5": { // area crédito
 				boolean cadastrado = false;
 				boolean cartaoAtivado = false;
 				CartaoCredito credito = CartaoBO.recuperaCartaoCredito();
@@ -181,14 +173,14 @@ public class Main {
 					cartaoAtivado = credito.isAtivo();
 					cadastrado = true;
 					Menus.dadosCartoes(credito.getNumero(), String.valueOf(credito.getDataVencimento()),
-							credito.getValorFatura(), credito.getLimite(), "disponivel",cartaoAtivado);
+							credito.getValorFatura(), credito.getLimite(), "disponivel", cartaoAtivado);
 				}
 				Menus.exibeOpcoesCartaoCredito(cadastrado, cartaoAtivado);
-				String op = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
+				String op = utils.lerConsole("|Digite a operação: ");
 				buscaOperacaoCredito(op, cadastrado, cartaoAtivado, credito);
 				break;
 			}
-			case "7": { // area debitos
+			case "6": { // area debitos
 				boolean cadastrado = false;
 				boolean cartaoAtivado = false;
 				CartaoDebito debito = CartaoBO.recuperaCartaoDebito();
@@ -196,16 +188,22 @@ public class Main {
 					cadastrado = true;
 					cartaoAtivado = debito.isAtivo();
 					Menus.dadosCartoes(debito.getNumero(), "", debito.getLimitePorTransacao(),
-							debito.getLimitePorTransacao(), "P/Transacao",cartaoAtivado);
+							debito.getLimitePorTransacao(), "P/Transacao", cartaoAtivado);
 				}
 				Menus.exibeOpcoesCartaoDebito(cadastrado, cartaoAtivado);
-				String op = utils.lerConsole("|DIGITE A OPERAÇÃO: ");
-				buscaOperacaoDebito(op, cadastrado, cartaoAtivado,debito);
+				String op = utils.lerConsole("|Digite a operação: ");
+				buscaOperacaoDebito(op, cadastrado, cartaoAtivado, debito);
+				break;
+			}
+			case "7": { // area pix
+				Menus.exibeMenuPix();
+				String op = utils.lerConsole("|Digite a operação: ");
+				buscaOperacaoPix(op);
 				break;
 			}
 			case "0": { // sair
-				Utils.loading("\n\nSAINDO"); // EXIBE LOADING NA TELA
-				System.out.println("\n\n|        LOGOFF CONCLUIDO!        |\n\n"
+				Utils.loading("\n\nSaindo"); // EXIBE LOADING NA TELA
+				System.out.println("\n\n|        Logoff Concluido!        |\n\n"
 						+ "====================================================================================");
 				ContaBO.zerarAlocacoesDeMemoria(); // zera os cadastros setados em memória
 				Banco.zerarTodasAsInstanciasBanco();
@@ -224,32 +222,29 @@ public class Main {
 		if (op.equals("*")) {
 			String numBandeira = retornaBandeira();
 			if (!numBandeira.equals("") || !numBandeira.equals("0") && cadastrado) {
-				long senha = retornaSenha();// solicita senha e retorna
+				String senha = retornaSenha();// solicita senha e retorna
 				String dataVencimento = escolherDataVencimento();
-				if (CartaoBO.cadastraCartaoCredito(numBandeira, senha, true, dataVencimento)) {
-					System.out.println("     >>CARTÃO DE CRÉDITO CRIADO COM SUCESSO!<<    ");
-				} else {
-					System.err.println("\n     >>HOUVE UM ERRO AO CRIAR O CARTÃO!<<     ");
-				}
-
+				System.out.println(CartaoBO.cadastraCartaoCredito(numBandeira, senha, true, dataVencimento)
+						? "     >>Cartão de crédito criado com sucesso!<<    "
+						: "\n     >>Houve um erro ao criar o cartão!<<     ");
 			}
-		} else if (op.equals("1") && cadastrado) {//COMPRAR
-			if(ativado) {
+		} else if (op.equals("1") && cadastrado) {// COMPRAR
+			if (ativado) {
 				comprarComCartao(1);// 1 credito e 2 debito
-			}else {
-				System.err.println("         >>CARTÃO SE ENCONTRA BLOQUEADO!<<");
+			} else {
+				System.err.println("         >>Cartão se encontra bloqueado!<<");
 			}
 		} else if (op.equals("2") && cadastrado) {// CONSULTAR FATURA
-			System.out.println(CartaoBO.consultaFaturasCredito());  
+			System.out.println(CartaoBO.consultaFaturasCredito());
 		} else if (op.equals("3") && cadastrado) {// ALTERA VENCIMENTO
-			System.out.println("DIA DE VENCIMENTO ATUAL: " + credito.getDataVencimento());
+			System.out.println("Data de vencimento atual: " + credito.getDataVencimento());
 			String dataVencimento = escolherDataVencimento();
 			System.out.println(
-					CartaoBO.alteraDataVencimento(dataVencimento) ? "\n          >>DATA ALTERADA COM SUCESSO!<<\n"
-							: "        >>HOUVE UM ERRO NA ALTERAÇÃO DA DATA!<<");
+					CartaoBO.alteraDataVencimento(dataVencimento) ? "\n          >>Data alterada com sucesso!<<\n"
+							: "        >>Houve um erro na alteração da Data!<<");
 		} else if (op.equals("4") && cadastrado) {// PAGAMENTO DE FATURA
-			System.out.println("\n>>FATURA ATUAL:"+utils.convertToReais(credito.getValorFatura()));
-			double valorPagamento = Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA PAGAR: "));
+			System.out.println("\n>>Fatura atual:" + utils.convertToReais(credito.getValorFatura()));
+			double valorPagamento = Double.parseDouble(utils.lerConsole("Digite o valor que deseja pagar: "));
 			System.out.println(CartaoBO.debitarFaturaCredito(valorPagamento));
 		} else if (op.equals("5") && cadastrado) {// BLOQUEIA CARTON
 			exibeAtivacao(ativado, 2);// 1 = debito 2= credito
@@ -258,15 +253,13 @@ public class Main {
 
 	public static void comprarComCartao(int op) {
 		Menus.exibeMenuCompra();
-		String descricao = utils.lerConsole("NOME DO PRODUTO: ");
-		double valor = Double.parseDouble(utils.lerConsole("DIGITE O VALOR DO PRODUTO: "));
-		String senha = utils.lerConsole("DIGITE A SENHA: ");
-		if(op ==1 ) {
-			System.out.println(
-					CartaoBO.cadastraCompraCredito(descricao,valor,senha));
-		}else {
-			System.out.println(
-					CartaoBO.cadastraCompraDebito(descricao,valor,senha));
+		String descricao = utils.lerConsole("Nome do Produto: ");
+		double valor = Double.parseDouble(utils.lerConsole("Digite o valor do produto: "));
+		String senha = utils.lerConsole("Digite a senha: ");
+		if (op == 1) {
+			System.out.println(CartaoBO.cadastraCompraCredito(descricao, valor, senha));
+		} else {
+			System.out.println(CartaoBO.cadastraCompraDebito(descricao, valor, senha));
 		}
 	}
 
@@ -276,34 +269,36 @@ public class Main {
 			String numBandeira = retornaBandeira();
 			if (!numBandeira.equals("") || !numBandeira.equals("0") && cadastrado) {
 				// SETANDO SENHA
-				long senha = retornaSenha();
+				String senha = retornaSenha();
+				utils.loading("\n       Criando cartão de débito");
 				if (CartaoBO.cadastraCartaoDebito(numBandeira, senha, true, returnLimite())) {
-					System.out.println("     >>CARTÃO DE DÉBITO CRIADO COM SUCESSO!<<    ");
+					System.out.println("     >>Cartão de débito criado com sucesso!<<    ");
 				} else {
-					System.err.println("\n     >>HOUVE UM ERRO AO CRIAR O CARTÃO!<<     ");
+					System.err.println("\n     >>Houve um erro ao criar o cartão!<<     ");
 				}
 			}
-		} else if (op.equals("1") && cadastrado) {//COMPRAR
+		} else if (op.equals("1") && cadastrado) {// COMPRAR
 			comprarComCartao(2);// 1 credito e 2 debito
-			
+
 		} else if (op.equals("2") && cadastrado) {// CONSULTA EXTRATO
 			System.out.println(CartaoBO.consultaExtratoDebito());
 
 		} else if (op.equals("3") && cadastrado) {// ALTERA LIMITE P/TRANSACAO
 			System.out.println("\n--------------- ALTERAR LIMITE POR TRANSACAO ---------------");
-			System.out.println(">>LIMITE ATUAL: " + debito.getLimitePorTransacao());
+			System.out.println(">>Limite atual: " + debito.getLimitePorTransacao());
 			double novoLimiteTransacao = returnLimite();
-			System.out.println(
-					CartaoBO.alterarLimitePorTransacao(novoLimiteTransacao) ? "\n          >>LIMITE ALTERADO COM SUCESSO!<<\n"
-							: "        >>HOUVE UM ERRO NA ALTERAÇÃO DO LIMITE!<<");
+			System.out.println(CartaoBO.alterarLimitePorTransacao(novoLimiteTransacao)
+					? "\n          >>Limite alterado com sucesso!<<\n"
+					: "        >>Houve um erro na alteração do limite!<<");
 		} else if (op.equals("4") && cadastrado) {// BLOQUEIA CARTON
 			exibeAtivacao(ativado, 1);// 1 = debito 2= credito
 		}
 	}
+
 // retorna o limite com base na opçao selicionada
 	private static double returnLimite() {
 		Menus.exibeLimites();// EXIBE LIMITES NO CONSOLE
-		String opLimite = utils.lerConsole("|DIGITE A OPERAÇÃO DO LIMITE:");
+		String opLimite = utils.lerConsole("|Digite a operação do Limite:");
 		if (opLimite.equals("1")) {
 			return 100.0;
 		} else if (opLimite.equals("2")) {
@@ -317,25 +312,26 @@ public class Main {
 		}
 		return 100.0;
 	}
+
 // retorna a bandeira do cartão com base na opcao selecionada
 	public static String retornaBandeira() {
 		Menus.exibeBandeirasCartoes();
-		String numBandeira = utils.lerConsole("|DIGITE A OPERAÇÃO DA BANDEIRA: ");
+		String numBandeira = utils.lerConsole("|Digite a operação da bandeira: ");
 		// SETANDO BANDEIRA
 		if (numBandeira.equals("0")) {// VOLTA MENU ANTERIOR
-			System.out.println("\n\nCANCELOU A OPERAÇÃO DE CADASTRO!");
+			System.out.println("\n\nCancelou a operação!");
 
 		} else if (numBandeira.equals("1"))// VISA
 		{
-			System.out.println("\n    >>VISA SELECIONADO!<<    \n");
-			numBandeira = "VISA";
+			System.out.println("\n    >>Visa selecionado!<<    \n");
+			numBandeira = "visa";
 
 		} else if (numBandeira.equals("2")) {// MASTERCARD
-			System.out.println("\n    >>MASTERCARD SELECIONADO!<<    \n");
-			numBandeira = "MASTERCARD";
+			System.out.println("\n    >>Mastercard selecionado!<<    \n");
+			numBandeira = "mastercard";
 		} else if (numBandeira.equals("3")) {// MASTERCARD
-			System.out.println("\n    >>ELO SELECIONADO!<<    \n");
-			numBandeira = "ELO";
+			System.out.println("\n    >>Elo selecionado!<<    \n");
+			numBandeira = "elo";
 		}
 		return numBandeira;
 	}
@@ -345,35 +341,38 @@ public class Main {
 		if (ativado) {
 			boolean operacao = (tipo == 1) ? CartaoBO.ativaDesativaDebito(false) : CartaoBO.ativaDesativaCredito(false);
 			System.out.println(
-					(operacao) ? "\n     >>CARTÃO BLOQUEADO!<<     \n" : "\n     >>HOUVE UM ERRO NO BLOQUEIO<<     \n");
+					(operacao) ? "\n     >>Cartao bloqueado!<<     \n" : "\n     >>Houve um erro no bloqueio<<     \n");
 
 		} else {
 			boolean operacao = (tipo == 1) ? CartaoBO.ativaDesativaDebito(true) : CartaoBO.ativaDesativaCredito(true);
-			System.out.println((operacao) ? "\n     >>CARTÃO DESBLOQUEADO!<<     \n"
-					: "\n     >>HOUVE UM ERRO NO DESBLOQUEIO<<     \n");
+			System.out.println((operacao) ? "\n     >>Cartão desbloqueado!<<     \n"
+					: "\n     >>Houve um erro no desbloqueio<<     \n");
 		}
 	}
 
 // SOLICITA UMA SENHA DO USUARIO E RETORNA 
-	public static long retornaSenha() {
+	public static String retornaSenha() {
 		// SETANDO SENHA
-		long senha = 0000;
+		int senha = 0;
 		while (true) {
 			try {
-				senha = Long.parseLong(utils.lerConsole("|DIGITE UMA SENHA DE 4 NUMEROS: "));
-				break;
+				senha = Integer.parseInt(utils.lerConsole("|Digite uma senha de 4 numeros: "));
+				if (String.valueOf(senha).length() == 4) {
+					break;
+				} else
+					System.err.println("Senha deve ser igual a 4 numeros!");
 			} catch (NumberFormatException e) {
-				System.err.println("SUA SENHA DEVE CONTER APENAS NUMEROS");
+				System.err.println("Sua senha deve conter apenas numeros");
 				continue;
 			}
 		}
-		return senha;
+		return String.valueOf(senha);
 	}
 
 // ESCOLHER DATA DE VENCIMENTO E RETORNA
 	private static String escolherDataVencimento() {
 		Menus.exibeDatasVencimento();
-		String op = utils.lerConsole("DIGITE A DATA DE VENCIMENTO DA FATURA: ");
+		String op = utils.lerConsole("Digite a opcao de data de vencimento: ");
 		if (op.equals("1")) {
 			return "1";
 		} else if (op.equals("2")) {
@@ -388,43 +387,43 @@ public class Main {
 
 	private static void buscaOperacaoPix(String op) {
 		switch (op) {
-		case "1": {
+		case "1": {// EXIBE CHAVES E CADASTRA
 			exibirChavesDisponiveis();
 			exibirOpcoesChavesPixCadastro();
 			menuPrincipal();
 			break;
 		}
-		case "2": {
+		case "2": {// EXIBE CHAVES
 			exibirChavesDisponiveis();
 			break;
 		}
-		case "3": {
-			String chavePix = utils.lerConsole("DIGITE A CHAVE PIX DE DESTINO: ");
-			double valor = Double.parseDouble(utils.lerConsole("DIGITE O VALOR QUE DESEJA TRANFERIR: "));
-			String[] resposta = PixBO.buscaETRansferePix(chavePix, valor, Menus.exibeOpcaoConta("QUAL CONTA?"));
+		case "3": {// TRANSFERE VIA PIX
+			String chavePix = utils.lerConsole("Digite a chave pix de destino: ");
+			double valor = Double.parseDouble(utils.lerConsole("Digite o valor que deseja transferir: "));
+			String[] resposta = PixBO.buscaETRansferePix(chavePix, valor, Menus.exibeOpcaoConta("Qual conta?"));
 			System.out.println(resposta[0]);// Exibe resposta do control
-			if (resposta[1].equals("0")) {
+			if (resposta[1].equals("0") || resposta[1].equals("2")) {
 				menuPrincipal();
 				break;
 			}
 		}
-		case "4": {
+		case "4": {// DELETA CHAVES PIX
 			exibirChavesDisponiveis();
-			int chavePix = Integer.parseInt(utils.lerConsole("DIGITE O ID DE CHAVE: "));
+			int chavePix = Integer.parseInt(utils.lerConsole("Digite o id de chave: "));
+			utils.loading("\n       Deletando chave pix");
 			if (PixBO.deletarChave(chavePix)) {
-				System.out.println("           >>>PIX REMOVIDO COM SUCESSO!<<<    ");
+				System.out.println("           >>>Pix removido com sucesso!<<<    ");
 				break;
 			} else {
-				System.err.println("           >>>O ID DO PIX NÃO EXISTE!<<<    ");
+				System.err.println("           >>>O id do pix não existe!<<<    ");
 			}
 
 		}
-
-		case "0": {
+		case "0": { // SAIR
 			menuPrincipal();
 		}
 		default:
-			System.out.println("DIGITE VALORES ENTRE 0 E 4");
+			System.out.println("Digite valores entre 0 e 4");
 		}
 
 	}
@@ -433,12 +432,12 @@ public class Main {
 	private static void exibirOpcoesChavesPixCadastro() {
 		while (true) {
 			Menus.exibeTiposChavesPix();
-			String op = utils.lerConsole("|DIGITE A OPÇÃO: ");
+			String op = utils.lerConsole("|Digite a opção: ");
 			if (buscaOperacaoTipoPix(op)) {
-				System.out.println("\n   >>CHAVE PIX REGISTRADA COM SUCESSO!<<  ");
+				System.out.println("\n   >>Chave pix registrada com sucesso!<<  ");
 				break;
 			} else {
-				System.out.println("\n   >>ERRO NA CHAVE PIX OU PIX JÁ EXISTE, DIGITE NOVAMENTE!<<  ");
+				System.out.println("\n   >>Erro na chave pix ou pix já existe, Digite novamente!<<  ");
 			}
 		}
 	}
@@ -453,18 +452,18 @@ public class Main {
 			return PixBO.cadastraChavePix(0, cpfConsole, true);
 		}
 		case "1": {
-			String email = utils.lerConsole("DIGITE O EMAIL: ");
+			String email = utils.lerConsole("Digite o email: ");
 			return PixBO.cadastraChavePix(1, email, true);
 		}
 		case "2": {
-			String telefone = utils.lerConsole("DIGITE O TELEFONE: ");
+			String telefone = utils.lerConsole("Digite o telefone: ");
 			return PixBO.cadastraChavePix(2, telefone, true);
 		}
 		case "3": {
 			return PixBO.cadastraChavePix(3, "", true);
 		}
 		default:
-			System.out.println("DIGITE VALORES ENTRE 0 E 3");
+			System.out.println("Digite valores entre 0 e 3");
 			return false;
 		}
 
@@ -492,7 +491,7 @@ public class Main {
 		} else if (op == 1) {
 			cadastrar();
 		} else {
-			System.out.println("\n|CPF OU SENHA INCORRETOS!\n");
+			System.out.println("\n|CPF ou senha incorretos!\n");
 
 		}
 	}
@@ -501,9 +500,9 @@ public class Main {
 	private static void exibirRecuperacaoSenha() {
 		System.out.println("|-------  RECUPERACAO SENHA  -----|");
 		while (true) {
-			String emailRecuperar = utils.lerConsole("|DIGITE O EMAIL CADASTRADO: ");
+			String emailRecuperar = utils.lerConsole("|Digite o email cadastrado: ");
 			if (ClienteBO.recuperaSenha(emailRecuperar)) {
-				System.out.println("\n\n|        RECUPERAÇÃO DE SENHA ENVIADA COM SUCESSO!        |\n\n");
+				System.out.println("\n\n|        Recuperacao de senha enviada com sucesso!        |\n\n");
 				break;
 			}
 		}

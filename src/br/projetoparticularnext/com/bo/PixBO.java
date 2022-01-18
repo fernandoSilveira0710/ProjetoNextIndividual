@@ -53,7 +53,7 @@ public class PixBO {
 		if(contaDestino != null) {
 			ContaBO.transfereEntreContas("PIX",valor, tipo, resposta, contaDestino, 0, false);
 		}else {
-			resposta[0] = "ESTA CONTA NÃO EXISTE!";
+			resposta[0] = "         >>Esta conta não existe!<<";
 			resposta[1] = "1";
 		}
 		

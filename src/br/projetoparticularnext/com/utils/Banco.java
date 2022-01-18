@@ -100,14 +100,14 @@ public class Banco {
 			if (cc.getNumero().equals(idCC)) {
 				ccIsActive = true;
 				for (Pix pix : cc.getListPix()) {
-					chavesPix += pix.id + " - TIPO:" + pix.tipoChave.name() + " CHAVE:" + pix.conteudoChave + "\n";
+					chavesPix += pix.id + " - tipo:" + pix.tipoChave.name() + " chave:" + pix.conteudoChave + "\n";
 				}
 			}
 		} else if (cp != null) {
 			if (cp.getNumero().equals(idCP)) {
 				cpIsActive = true;
 				for (Pix pix : cp.getListPix()) {
-					chavesPix += pix.id + " - " + "TIPO:" + pix.tipoChave.name() + " CHAVE:" + pix.conteudoChave + "\n";
+					chavesPix += pix.id + " - " + "tipo:" + pix.tipoChave.name() + " chave:" + pix.conteudoChave + "\n";
 				}
 
 			}
@@ -121,21 +121,17 @@ public class Banco {
 			boolean b) {
 		consultaPix(idCC, idCP);
 		if (!identificaPixExistente(conteudoChave)) {
-			System.out.println("EXISTE PIX ");
 			Pix pix = new Pix();
 			pix.ativarChave(tipoChavePix, conteudoChave, b);
 			if (ccIsActive && cpIsActive) {
-				System.out.println("EXISTE DUAS CONTAS");
 				banco_De_Dados.get(idCC).getListPix().add(pix);
 				return true;
 			} else if (ccIsActive) {
-				System.out.println("EXISTE SÓ CC");
 				banco_De_Dados.get(idCC).getListPix().add(pix);
 				return true;
 			}
 
 			else {
-				System.out.println("EXISTE SÓ CP");
 				banco_De_Dados.get(idCP).getListPix().add(pix);
 				return true;
 			}
@@ -209,9 +205,9 @@ public class Banco {
 				return false;
 			} else {
 				cc.setDebito(debito);
-				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + "NUMERO CARTÃO: " + debito.getNumero()
-						+ "\nBANDEIRA: " + debito.getBandeira().toUpperCase() + "   LIMITE DEFINIDO:"
-						+ debito.getLimitePorTransacao());
+				System.out.println("\n\n           >>DADOS DO CARTÃO CRIADO<<\n" + "Numero: " + debito.getNumero()
+						+ "\nBandeira: " + debito.getBandeira()+ "   Limite:"
+						+ Utils.convertToReais(debito.getLimitePorTransacao()));
 				return true;
 			}
 		} else {
@@ -219,9 +215,9 @@ public class Banco {
 				return false;
 			} else {
 				cp.setDebito(debito);
-				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>NUMERO CARTÃO: " + debito.getNumero()
-						+ "\n>>BANDEIRA: " + debito.getBandeira().toUpperCase() + "   LIMITE DEFINIDO:"
-						+ debito.getLimitePorTransacao());
+				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>Numero: " + debito.getNumero()
+						+ "\n>>Bandeira: " + debito.getBandeira()+ "   Limite:"
+						+ Utils.convertToReais(debito.getLimitePorTransacao()));
 				return true;
 			}
 		}
@@ -234,9 +230,9 @@ public class Banco {
 				return false;
 			} else {
 				cc.setCredito(credito);
-				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>NUMERO CARTÃO: " + credito.getNumero()
-						+ "\n>>BANDEIRA: " + credito.getBandeira().toUpperCase() + "   LIMITE DISP:"
-						+ credito.getLimite());
+				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>Numero: " + credito.getNumero()
+						+ "\n>>Bandeira: " + credito.getBandeira()+ "   Limite:"
+						+ Utils.convertToReais(credito.getLimite()));
 				return true;
 			}
 		} else {
@@ -244,9 +240,9 @@ public class Banco {
 				return false;
 			} else {
 				cp.setCredito(credito);
-				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>NUMERO CARTÃO: " + credito.getNumero()
-						+ "\n>>BANDEIRA: " + credito.getBandeira().toUpperCase() + "   LIMITE DISP:"
-						+ credito.getLimite());
+				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>Numero: " + credito.getNumero()
+						+ "\n>>Bandeira: " + credito.getBandeira()+ "   Limite:"
+						+ Utils.convertToReais(credito.getLimite()));
 				return true;
 			}
 		}
@@ -370,13 +366,13 @@ public class Banco {
 						cc.getCredito().setLimite(cc.getCredito().getLimite() - valor);
 						cc.getCredito().getCompras().add(new Compra(valor, descricao));
 						cc.getCredito().setValorFatura(cc.getCredito().getValorFatura() + valor);
-						return "\n         >>COMPRA EFETUADA COM SUCESSO!<<";
+						return "\n         >>Compra efetuada com sucesso!<<";
 					}
-					return "\n         >>SEM LIMITE DISPONIVEL PARA ESTA TRANSACAO!<<";
+					return "\n         >>Sem limite disponivel para transação!<<";
 				} else
-					return "\n         >>SENHA INCORRETA!<<";
+					return "\n         >>Senha incorreta!<<";
 			} else
-				return "\n         >>NÃO EXISTE CARTÃO CADASTRADO NESTA CONTA!<<";
+				return "\n         >>Não existe cartão cadastrado nesta conta!<<";
 		} else {
 			if (cp != null) {
 				if (cp.getCredito() != null) {
@@ -384,17 +380,17 @@ public class Banco {
 						if (cp.getCredito().getLimite() >= valor) {
 							cp.getCredito().setLimite(cc.getCredito().getLimite() - valor);
 							cp.getCredito().getCompras().add(new Compra(valor, descricao));
-							return "\n         >>COMPRA EFETUADA COM SUCESSO!<<";
+							return "\n         >>Compra efetuada com sucesso!<<";
 						}
-						return "\n         >>SEM LIMITE DISPONIVEL PARA ESTA TRANSACAO!<<";
+						return "\n         >>Sem limite disponivel para esta transação!<<";
 
 					} else
-						return "\n         >>SENHA INCORRETA!<<";
+						return "\n         >>Senha incorreta!<<";
 				} else
-					return "\n         >>NÃO EXISTE CARTÃO CADASTRADO NESTA CONTA!<<";
+					return "\n         >>Não existe cartão cadastrado nesta conta!<<";
 			}
 		}
-		return "\n         >>HOUVE UM ERRO NA TRANSAÇÃO!<<";
+		return "\n         >>Houve um erro na transação!<<";
 	}
 
 	public static String cadastraCompraDebito(String descricao, double valor, String senha) {
@@ -404,13 +400,13 @@ public class Banco {
 					if (cc.getSaldo() >= valor && cc.getDebito().getLimitePorTransacao() >= valor) {
 						cc.setSaldo(cc.getSaldo() - valor);
 						cc.getDebito().getCompras().add(new Compra(valor, descricao));
-						return "\n         >>COMPRA NO DÉBITO EFETUADA COM SUCESSO!<<";
+						return "\n         >>Compra no débito efetuada com sucesso!<<";
 					}
-					return "\n         >>SEM LIMITE DISPONIVEL PARA ESTA TRANSACAO!<<";
+					return "\n         >>Sem limite disponivel para esta transação!<<";
 				} else
-					return "\n         >>SENHA INCORRETA!<<";
+					return "\n         >>Senha incorreta!<<";
 			} else
-				return "\n         >>NÃO EXISTE CARTÃO DE DÉBITO CADASTRADO NESTA CONTA!<<";
+				return "\n         >>Não existe cartão de débito cadastrado nesta conta!<<";
 		} else {
 			if (cp != null) {
 				if (cp.getDebito() != null) {
@@ -418,21 +414,21 @@ public class Banco {
 						if (cp.getSaldo() >= valor && cp.getDebito().getLimitePorTransacao() >= valor) {
 							cp.setSaldo(cp.getSaldo() - valor);
 							cp.getDebito().getCompras().add(new Compra(valor, descricao));
-							return "\n         >>COMPRA NO CRÉDITO EFETUADA COM SUCESSO!<<";
+							return "\n         >>Compra no crédito aprovada!<<";
 						}
-						return "\n         >>SEM LIMITE DISPONIVEL PARA ESTA TRANSACAO!<<";
+						return "\n         >>Sem limite disponivel para esta transação!<<";
 
 					} else
-						return "\n         >>SENHA INCORRETA!<<";
+						return "\n         >>Senha incorreta!<<";
 				} else
-					return "\n         >>NÃO EXISTE CARTÃO DE DÉBITO CADASTRADO NESTA CONTA!<<";
+					return "\n         >>Não existe cartão de débito cadastrado nesta conta!<<";
 			}
 		}
-		return "\n         >>HOUVE UM ERRO NA TRANSAÇÃO!<<";
+		return "\n         >>Houve um erro na transação!<<";
 	}
 
 	public static String consultaFaturaCredito() {
-		String fatura = "----------- FATURA ATUAL ----------\n";
+		String fatura = "\n---------------- FATURA ATUAL -----------------\n";
 		if (cc != null) {
 			if (cc.getCredito() != null) {
 				fatura += "" + cc.getCredito().getCompras().size() + " Compras realizadas com este cartão\n"
@@ -442,7 +438,7 @@ public class Banco {
 					fatura += "\n *Descricao:" + compra.getDescricao() + "  Valor: -"
 							+ Utils.convertToReais(compra.getValor()) + "  " + compra.getDataCompra();
 				}
-				fatura += "-----------------------------------";
+				fatura += "\n-----------------------------------------------";
 				return fatura;
 			} else
 				return fatura;
@@ -501,22 +497,23 @@ public class Banco {
 				if (cc.getSaldo() >= valorPagamento && cc.getCredito().getValorFatura() > 0.0) {
 					cc.setSaldo(cc.getSaldo() - valorPagamento);
 					cc.getCredito().setValorFatura(cc.getCredito().getValorFatura() - valorPagamento);
-					return "\n         >>PAGAMENTO DE "+Utils.convertToReais(valorPagamento)+ "DA FATURA REALIZADA COM SUCESSO!<<";
+					cc.getCredito().setLimite(cc.getCredito().getLimite()+valorPagamento);
+					return "\n         >>Pagamento de "+Utils.convertToReais(valorPagamento)+ " da fatura realizada com sucesso!<<";
 				} else
-					return "\n         >>VOCE NÃO POSSUI SALDO EM CONTA PARA REALIZAR ESTE PAGAMENTO!<<";
+					return "\n         >>Você não possui saldo em conta para realizar este pagamento!<<";
 			} else
-				return "\n         >>NÃO EXISTE CARTÃO DE CRÉDITO CADASTRADO NESTA CONTA!<<";
+				return "\n         >>não existe cartão de crédito cadastrado nesta conta!<<";
 		} else {
 			if (cp != null) {
 				if (cp.getCredito() != null) {
 					if (cp.getSaldo() >= valorPagamento && cc.getCredito().getValorFatura() > 0.0) {
 						cp.setSaldo(cp.getSaldo() - valorPagamento);
 						cp.getCredito().setValorFatura(cp.getCredito().getValorFatura() - valorPagamento);
-						return "\n         >>PAGAMENTO DE FATURA REALIZADA COM SUCESSO!<<";
+						return "\n         >>Fatura paga com sucesso!<<";
 					} else
-						return "\n         >>VOCE NÃO POSSUI SALDO EM CONTA PARA REALIZAR ESTE PAGAMENTO!<<";
+						return "\n         >>Você não possui saldo para realizar este pagamento!<<";
 				} else
-					return "\n         >>NÃO EXISTE CARTÃO DE CRÉDITO CADASTRADO NESTA CONTA!<<";
+					return "\n         >>Não existe cartão de crédito cadastrado nesta conta!<<";
 			}
 		}
 		return "\n         >>HOUVE UM ERRO NA TRANSAÇÃO!<<";
