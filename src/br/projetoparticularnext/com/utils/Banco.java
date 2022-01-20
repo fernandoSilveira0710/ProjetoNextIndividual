@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.projetoparticularnext.com.bean.Endereco;
+import br.projetoparticularnext.com.bean.cartao.Apolice;
 import br.projetoparticularnext.com.bean.cartao.Cartao;
 import br.projetoparticularnext.com.bean.cartao.CartaoCredito;
 import br.projetoparticularnext.com.bean.cartao.CartaoDebito;
@@ -34,14 +35,14 @@ public class Banco {
 	private void criarObjetosEstaticos() {
 		Cliente cliente1 = new Cliente("1234", "luizfernando962@gmail.com", "43546219830", "447218402",
 				"Fernando Silveira",
-				new Endereco("Cesário Lange", "SP", "Centro", "1759", "Rua do Comércio", "18285-000"));
+				new Endereco("Cesï¿½rio Lange", "SP", "Centro", "1759", "Rua do Comï¿½rcio", "18285-000"));
 		Conta conta = new Conta(cliente1, TipoConta.ContaCorrente);// 1
 		Pix pix = new Pix();
 		pix.ativarChave(TipoChavePix.CPF, "43546219830", true);
 		conta.getListPix().add(pix);
 		cadastraConta(conta.getNumero(), conta);
 		Cliente cliente2 = new Cliente("1234", "isabela@gmail.com", "43096078882", "447218402", "Isabela Silveira",
-				new Endereco("Cesário Lange", "SP", "Centro", "1759", "Rua do Comércio", "18285-000"));
+				new Endereco("Cesï¿½rio Lange", "SP", "Centro", "1759", "Rua do Comï¿½rcio", "18285-000"));
 		Conta conta2 = new Conta(cliente2, TipoConta.ContaPoupanca);// 1
 		Pix pix2 = new Pix();
 		pix2.ativarChave(TipoChavePix.CPF, "43096078882", true);
@@ -53,7 +54,7 @@ public class Banco {
 	public static Conta buscaContaPorNumero(String numeroDestino) {
 		Conta conta = banco_De_Dados.get(numeroDestino);
 		if (conta == null) {
-//			System.out.println("Conta não encontrada");
+//			System.out.println("Conta nï¿½o encontrada");
 			return null;
 		}
 		return conta;
@@ -158,14 +159,6 @@ public class Banco {
 
 	}
 
-	// zera as instancias e limpa os atributos staticos
-	public static void zerarTodasAsInstanciasBanco() {
-		cc = null;
-		cp = null;
-		ccIsActive = false;
-		cpIsActive = false;
-	}
-
 	public static Conta buscaeTransferePix(String chavePix) {
 		for (Map.Entry<String, Conta> tipoConta : banco_De_Dados.entrySet()) {
 			for (Pix pix : tipoConta.getValue().getListPix()) {
@@ -197,16 +190,16 @@ public class Banco {
 		return false;
 	}
 
-////cadastra cartão com base na conta
+////cadastra cartï¿½o com base na conta
 	public static boolean cadastraCartaoDebito(CartaoDebito debito) {
 		if (cc != null) {
-//			System.out.println("CC NUM CARTÕES: " + cc.getCartoes().size());
+//			System.out.println("CC NUM CARTï¿½ES: " + cc.getCartoes().size());
 			if (cc.getDebito() != null) {
 				return false;
 			} else {
 				cc.setDebito(debito);
-				System.out.println("\n\n           >>DADOS DO CARTÃO CRIADO<<\n" + "Numero: " + debito.getNumero()
-						+ "\nBandeira: " + debito.getBandeira()+ "   Limite:"
+				System.out.println("\n\n           >>DADOS DO CARTï¿½O CRIADO<<\n" + "Numero: " + debito.getNumero()
+						+ "\nBandeira: " + debito.getBandeira() + "   Limite:"
 						+ Utils.convertToReais(debito.getLimitePorTransacao()));
 				return true;
 			}
@@ -215,8 +208,8 @@ public class Banco {
 				return false;
 			} else {
 				cp.setDebito(debito);
-				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>Numero: " + debito.getNumero()
-						+ "\n>>Bandeira: " + debito.getBandeira()+ "   Limite:"
+				System.out.println("           >>DADOS DO CARTï¿½O CRIADO<<\n" + ">>Numero: " + debito.getNumero()
+						+ "\n>>Bandeira: " + debito.getBandeira() + "   Limite:"
 						+ Utils.convertToReais(debito.getLimitePorTransacao()));
 				return true;
 			}
@@ -225,13 +218,13 @@ public class Banco {
 
 	public static boolean cadastraCartaoCredito(CartaoCredito credito) {
 		if (cc != null) {
-//			System.out.println("CC NUM CARTÕES: " + cc.getCartoes().size());
+//			System.out.println("CC NUM CARTï¿½ES: " + cc.getCartoes().size());
 			if (cc.getCredito() != null) {
 				return false;
 			} else {
 				cc.setCredito(credito);
-				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>Numero: " + credito.getNumero()
-						+ "\n>>Bandeira: " + credito.getBandeira()+ "   Limite:"
+				System.out.println("           >>DADOS DO CARTï¿½O CRIADO<<\n" + ">>Numero: " + credito.getNumero()
+						+ "\n>>Bandeira: " + credito.getBandeira() + "   Limite:"
 						+ Utils.convertToReais(credito.getLimite()));
 				return true;
 			}
@@ -240,8 +233,8 @@ public class Banco {
 				return false;
 			} else {
 				cp.setCredito(credito);
-				System.out.println("           >>DADOS DO CARTÃO CRIADO<<\n" + ">>Numero: " + credito.getNumero()
-						+ "\n>>Bandeira: " + credito.getBandeira()+ "   Limite:"
+				System.out.println("           >>DADOS DO CARTï¿½O CRIADO<<\n" + ">>Numero: " + credito.getNumero()
+						+ "\n>>Bandeira: " + credito.getBandeira() + "   Limite:"
 						+ Utils.convertToReais(credito.getLimite()));
 				return true;
 			}
@@ -368,11 +361,11 @@ public class Banco {
 						cc.getCredito().setValorFatura(cc.getCredito().getValorFatura() + valor);
 						return "\n         >>Compra efetuada com sucesso!<<";
 					}
-					return "\n         >>Sem limite disponivel para transação!<<";
+					return "\n         >>Sem limite disponivel para transaï¿½ï¿½o!<<";
 				} else
 					return "\n         >>Senha incorreta!<<";
 			} else
-				return "\n         >>Não existe cartão cadastrado nesta conta!<<";
+				return "\n         >>Nï¿½o existe cartï¿½o cadastrado nesta conta!<<";
 		} else {
 			if (cp != null) {
 				if (cp.getCredito() != null) {
@@ -382,15 +375,15 @@ public class Banco {
 							cp.getCredito().getCompras().add(new Compra(valor, descricao));
 							return "\n         >>Compra efetuada com sucesso!<<";
 						}
-						return "\n         >>Sem limite disponivel para esta transação!<<";
+						return "\n         >>Sem limite disponivel para esta transaï¿½ï¿½o!<<";
 
 					} else
 						return "\n         >>Senha incorreta!<<";
 				} else
-					return "\n         >>Não existe cartão cadastrado nesta conta!<<";
+					return "\n         >>Nï¿½o existe cartï¿½o cadastrado nesta conta!<<";
 			}
 		}
-		return "\n         >>Houve um erro na transação!<<";
+		return "\n         >>Houve um erro na transaï¿½ï¿½o!<<";
 	}
 
 	public static String cadastraCompraDebito(String descricao, double valor, String senha) {
@@ -400,13 +393,13 @@ public class Banco {
 					if (cc.getSaldo() >= valor && cc.getDebito().getLimitePorTransacao() >= valor) {
 						cc.setSaldo(cc.getSaldo() - valor);
 						cc.getDebito().getCompras().add(new Compra(valor, descricao));
-						return "\n         >>Compra no débito efetuada com sucesso!<<";
+						return "\n         >>Compra no dï¿½bito efetuada com sucesso!<<";
 					}
-					return "\n         >>Sem limite disponivel para esta transação!<<";
+					return "\n         >>Sem limite disponivel para esta transaï¿½ï¿½o!<<";
 				} else
 					return "\n         >>Senha incorreta!<<";
 			} else
-				return "\n         >>Não existe cartão de débito cadastrado nesta conta!<<";
+				return "\n         >>Nï¿½o existe cartï¿½o de dï¿½bito cadastrado nesta conta!<<";
 		} else {
 			if (cp != null) {
 				if (cp.getDebito() != null) {
@@ -414,24 +407,24 @@ public class Banco {
 						if (cp.getSaldo() >= valor && cp.getDebito().getLimitePorTransacao() >= valor) {
 							cp.setSaldo(cp.getSaldo() - valor);
 							cp.getDebito().getCompras().add(new Compra(valor, descricao));
-							return "\n         >>Compra no crédito aprovada!<<";
+							return "\n         >>Compra no crï¿½dito aprovada!<<";
 						}
-						return "\n         >>Sem limite disponivel para esta transação!<<";
+						return "\n         >>Sem limite disponivel para esta transaï¿½ï¿½o!<<";
 
 					} else
 						return "\n         >>Senha incorreta!<<";
 				} else
-					return "\n         >>Não existe cartão de débito cadastrado nesta conta!<<";
+					return "\n         >>Nï¿½o existe cartï¿½o de dï¿½bito cadastrado nesta conta!<<";
 			}
 		}
-		return "\n         >>Houve um erro na transação!<<";
+		return "\n         >>Houve um erro na transaï¿½ï¿½o!<<";
 	}
 
 	public static String consultaFaturaCredito() {
 		String fatura = "\n---------------- FATURA ATUAL -----------------\n";
 		if (cc != null) {
 			if (cc.getCredito() != null) {
-				fatura += "" + cc.getCredito().getCompras().size() + " Compras realizadas com este cartão\n"
+				fatura += "" + cc.getCredito().getCompras().size() + " Compras realizadas com este cartï¿½o\n"
 						+ "Fatura atual: " + Utils.convertToReais(cc.getCredito().getValorFatura()) + "  vencimento: "
 						+ cc.getCredito().getDataVencimento();
 				for (Compra compra : cc.getCredito().getCompras()) {
@@ -445,7 +438,7 @@ public class Banco {
 		} else {
 			if (cp != null) {
 				if (cp.getCredito() != null) {
-					fatura += "" + cp.getCredito().getCompras().size() + " Compras realizadas com este cartão\n"
+					fatura += "" + cp.getCredito().getCompras().size() + " Compras realizadas com este cartï¿½o\n"
 							+ "Fatura atual: " + Utils.convertToReais(cp.getCredito().getValorFatura())
 							+ "  vencimento: " + cc.getCredito().getDataVencimento();
 					for (Compra compra : cp.getCredito().getCompras()) {
@@ -465,7 +458,7 @@ public class Banco {
 		String fatura = "----------- EXTRATO ----------\n";
 		if (cc != null) {
 			if (cc.getDebito() != null) {
-				fatura += "" + cc.getDebito().getCompras().size() + " Compras realizadas com este cartão\n";
+				fatura += "" + cc.getDebito().getCompras().size() + " Compras realizadas com este cartï¿½o\n";
 				for (Compra compra : cc.getDebito().getCompras()) {
 					fatura += "\n *Descricao:" + compra.getDescricao() + "  Valor: -"
 							+ Utils.convertToReais(compra.getValor()) + "  " + compra.getDataCompra();
@@ -477,7 +470,7 @@ public class Banco {
 		} else {
 			if (cp != null) {
 				if (cp.getCredito() != null) {
-					fatura += "" + cp.getDebito().getCompras().size() + " Compras realizadas com este cartão\n";
+					fatura += "" + cp.getDebito().getCompras().size() + " Compras realizadas com este cartï¿½o\n";
 					for (Compra compra : cp.getDebito().getCompras()) {
 						fatura += "\n *Descricao:" + compra.getDescricao() + "  Valor: -"
 								+ Utils.convertToReais(compra.getValor()) + "  " + compra.getDataCompra();
@@ -497,12 +490,13 @@ public class Banco {
 				if (cc.getSaldo() >= valorPagamento && cc.getCredito().getValorFatura() > 0.0) {
 					cc.setSaldo(cc.getSaldo() - valorPagamento);
 					cc.getCredito().setValorFatura(cc.getCredito().getValorFatura() - valorPagamento);
-					cc.getCredito().setLimite(cc.getCredito().getLimite()+valorPagamento);
-					return "\n         >>Pagamento de "+Utils.convertToReais(valorPagamento)+ " da fatura realizada com sucesso!<<";
+					cc.getCredito().setLimite(cc.getCredito().getLimite() + valorPagamento);
+					return "\n         >>Pagamento de " + Utils.convertToReais(valorPagamento)
+							+ " da fatura realizada com sucesso!<<";
 				} else
-					return "\n         >>Você não possui saldo em conta para realizar este pagamento!<<";
+					return "\n         >>Voce nao possui saldo em conta para realizar este pagamento!<<";
 			} else
-				return "\n         >>não existe cartão de crédito cadastrado nesta conta!<<";
+				return "\n         >>nao existe cartao de credito cadastrado nesta conta!<<";
 		} else {
 			if (cp != null) {
 				if (cp.getCredito() != null) {
@@ -511,12 +505,53 @@ public class Banco {
 						cp.getCredito().setValorFatura(cp.getCredito().getValorFatura() - valorPagamento);
 						return "\n         >>Fatura paga com sucesso!<<";
 					} else
-						return "\n         >>Você não possui saldo para realizar este pagamento!<<";
+						return "\n         >>Voce nao possui saldo para realizar este pagamento!<<";
 				} else
-					return "\n         >>Não existe cartão de crédito cadastrado nesta conta!<<";
+					return "\n         >>Nao existe cartao de credito cadastrado nesta conta!<<";
 			}
 		}
-		return "\n         >>HOUVE UM ERRO NA TRANSAÇÃO!<<";
+		return "\n         >>Houve um erro na transaÃ§Ã£o!<<";
+	}
+
+	// CADASTRA UMA APOLICE DO SEGURO
+	public static boolean cadastraApolice(Apolice apolice) {
+		if (cc != null) {
+			if (cc.getCredito() != null) {
+				cc.getCredito().setApolice(apolice);
+				return true;
+			}
+		} else if (cp != null) {
+			if (cp.getCredito() != null) {
+				cp.getCredito().setApolice(apolice);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static Apolice buscarApolice() {
+		if (cc != null) {
+			if (cc.getCredito() != null) {
+				return cc.getCredito().getApolice();
+			}
+		} else if (cp != null) {
+			if (cp.getCredito() != null) {
+				return cp.getCredito().getApolice();
+			}
+		}
+		return null;
+	}
+
+	// zera as instancias e limpa os atributos staticos
+	public static void zerarTodasAsInstanciasBanco() {
+		cc = null;
+		cp = null;
+		ccIsActive = false;
+		cpIsActive = false;
+	}
+
+	public static void deletarApolice() {
+		cadastraApolice(null);
 	}
 
 }

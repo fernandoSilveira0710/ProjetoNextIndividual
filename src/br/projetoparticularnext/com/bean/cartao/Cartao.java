@@ -1,12 +1,13 @@
 package br.projetoparticularnext.com.bean.cartao;
 
+import br.projetoparticularnext.com.utils.Const;
+
 public class Cartao {
 	private int id;
 	private String numero;
 	private String bandeira;
 	private String senha;
 	private boolean isAtivo;
-	private static int contasCriadas = 1;;
 
 	public Cartao(String numero, String bandeira, String senha, boolean isAtivo) {
 		this.id = novoId();
@@ -66,7 +67,7 @@ public class Cartao {
 
 	// gera contas
 	private int novoId() {
-		return contasCriadas++;
+		return Const.CARTOES_CRIADOS++;
 	}
 
 }

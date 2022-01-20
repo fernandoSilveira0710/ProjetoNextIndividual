@@ -1,9 +1,13 @@
 package br.projetoparticularnext.com.view;
 
 import br.projetoparticularnext.com.bean.Endereco;
+import br.projetoparticularnext.com.bean.cartao.Apolice;
 import br.projetoparticularnext.com.bean.cartao.CartaoCredito;
 import br.projetoparticularnext.com.bean.cartao.CartaoDebito;
+import br.projetoparticularnext.com.bean.cartao.TipoSeguro;
+import br.projetoparticularnext.com.bean.conta.Conta;
 import br.projetoparticularnext.com.bean.conta.TipoConta;
+import br.projetoparticularnext.com.bo.ApoliceBO;
 import br.projetoparticularnext.com.bo.CartaoBO;
 import br.projetoparticularnext.com.bo.ClienteBO;
 import br.projetoparticularnext.com.bo.ContaBO;
@@ -11,6 +15,7 @@ import br.projetoparticularnext.com.bo.EnderecoBO;
 import br.projetoparticularnext.com.bo.PixBO;
 import br.projetoparticularnext.com.utils.Banco;
 import br.projetoparticularnext.com.utils.Menus;
+import br.projetoparticularnext.com.utils.UtilFormatConsole;
 import br.projetoparticularnext.com.utils.Utils;
 
 public class Main {
@@ -30,8 +35,8 @@ public class Main {
 
 // EXIBE MENU LOGIN
 	private static void menuInicio() {
-		System.out.println("|-----BEM VINDO AO BANCO NEXT-----|");
-		System.out.println("|------------  LOGIN  ------------|\n");
+		UtilFormatConsole.writeConsole("    -----BEM VINDO AO BANCO NEXT-----");
+		UtilFormatConsole.writeConsole("    ------------  LOGIN  ------------");
 
 		while (true) {
 			cpfConsole = utils.lerConsole("|Digite seu CPF:");
@@ -59,7 +64,7 @@ public class Main {
 		String email = utils.lerConsole("|Digite seu email: ");
 		senha = utils.lerConsole("Digite sua senha: ");
 		System.out.println(" __________________________________ ");
-		System.out.println("|-------  CADASTRO ENDEREÇO  ------|");
+		System.out.println("|-------  CADASTRO ENDEREï¿½O  ------|");
 		String rua = utils.lerConsole("|Digite sua rua: ");
 		String bairro = utils.lerConsole("|Digite seu bairro: ");
 		String numero = utils.lerConsole("|Digite seu numero: ");
@@ -70,9 +75,9 @@ public class Main {
 
 		System.out.println(" __________________________________ ");
 		System.out.println("|-------  DEFINIR TIPO CONTA  -----|");
-		System.out.println("|1- Conta Corrente                |\n" + "|2- Conta Poupança                 |\n"
-				+ "|3- Ambos(Corrente e Poupança)     |");
-		String tipoConta = utils.lerConsole("|Digite a opção:");
+		System.out.println("|1- Conta Corrente                |\n" + "|2- Conta PoupanÃ§a                 |\n"
+				+ "|3- Ambos(Corrente e PoupanÃ§a)     |");
+		String tipoConta = utils.lerConsole("|Digite a opÃ§Ã£o:");
 
 		System.out.println("|_________________________________|");
 
@@ -102,7 +107,7 @@ public class Main {
 	}
 
 // EXIBE MENU PRINCIPAL
-// SWITCH COM OPERAÇÕES PRINCIPAIS(SALDO,SAQUE,TRANSFERENCIA,DEPOSITO,PIX E
+// SWITCH COM OPERAÃ‡Ã•ES PRINCIPAIS(SALDO,SAQUE,TRANSFERENCIA,DEPOSITO,PIX E
 // SAIR)
 	private static void menuPrincipal() {
 
@@ -112,7 +117,7 @@ public class Main {
 		while (loop) {
 			System.out.println(ContaBO.exibeDetalhesConta());// BUSCA DETALHES CONTA
 			Menus.exibeOpcoesConta();// EXIBE DETALHES CONTA E MENU PRINCIPAL
-			String operacao = utils.lerConsole("|Digite sua operação: ");
+			String operacao = utils.lerConsole("|Digite sua operaÃ§Ã£o: ");
 
 			switch (operacao) {
 			case "1": { // transferencia
@@ -141,7 +146,7 @@ public class Main {
 						break;
 					} else {
 						Utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
-						System.err.println("\n>>Erro no depósito!<< \n");
+						System.err.println("\n>>Erro no depÃ³sito!<< \n");
 					}
 				}
 				break;
@@ -165,7 +170,7 @@ public class Main {
 				}
 				break;
 			}
-			case "5": { // area crédito
+			case "5": { // area crÃ©dito
 				boolean cadastrado = false;
 				boolean cartaoAtivado = false;
 				CartaoCredito credito = CartaoBO.recuperaCartaoCredito();
@@ -176,7 +181,7 @@ public class Main {
 							credito.getValorFatura(), credito.getLimite(), "disponivel", cartaoAtivado);
 				}
 				Menus.exibeOpcoesCartaoCredito(cadastrado, cartaoAtivado);
-				String op = utils.lerConsole("|Digite a operação: ");
+				String op = utils.lerConsole("|Digite a operaÃ§Ã£o: ");
 				buscaOperacaoCredito(op, cadastrado, cartaoAtivado, credito);
 				break;
 			}
@@ -191,13 +196,13 @@ public class Main {
 							debito.getLimitePorTransacao(), "P/Transacao", cartaoAtivado);
 				}
 				Menus.exibeOpcoesCartaoDebito(cadastrado, cartaoAtivado);
-				String op = utils.lerConsole("|Digite a operação: ");
+				String op = utils.lerConsole("|Digite a operaÃ§Ã£o: ");
 				buscaOperacaoDebito(op, cadastrado, cartaoAtivado, debito);
 				break;
 			}
 			case "7": { // area pix
 				Menus.exibeMenuPix();
-				String op = utils.lerConsole("|Digite a operação: ");
+				String op = utils.lerConsole("|Digite a operaÃ§Ã£o: ");
 				buscaOperacaoPix(op);
 				break;
 			}
@@ -205,7 +210,7 @@ public class Main {
 				Utils.loading("\n\nSaindo"); // EXIBE LOADING NA TELA
 				System.out.println("\n\n|        Logoff Concluido!        |\n\n"
 						+ "====================================================================================");
-				ContaBO.zerarAlocacoesDeMemoria(); // zera os cadastros setados em memória
+				ContaBO.zerarAlocacoesDeMemoria(); // zera os cadastros setados em memï¿½ria
 				Banco.zerarTodasAsInstanciasBanco();
 				loop = false;
 				break;
@@ -217,7 +222,7 @@ public class Main {
 		menuInicio();
 	}
 
-	// BUSCA OPERAÇÕES E EXECUTA OPERAÇÕES DO MENU DÉBITO
+	// BUSCA OPERACOES E EXECUTA OPERACOES DO MENU CREDITO
 	private static void buscaOperacaoCredito(String op, boolean cadastrado, boolean ativado, CartaoCredito credito) {
 		if (op.equals("*")) {
 			String numBandeira = retornaBandeira();
@@ -225,14 +230,14 @@ public class Main {
 				String senha = retornaSenha();// solicita senha e retorna
 				String dataVencimento = escolherDataVencimento();
 				System.out.println(CartaoBO.cadastraCartaoCredito(numBandeira, senha, true, dataVencimento)
-						? "     >>Cartão de crédito criado com sucesso!<<    "
-						: "\n     >>Houve um erro ao criar o cartão!<<     ");
+						? "     >>CartÃ£o de crÃ©dito criado com sucesso!<<    "
+						: "\n     >>Houve um erro ao criar o cartÃ£o!<<     ");
 			}
 		} else if (op.equals("1") && cadastrado) {// COMPRAR
 			if (ativado) {
 				comprarComCartao(1);// 1 credito e 2 debito
 			} else {
-				System.err.println("         >>Cartão se encontra bloqueado!<<");
+				System.err.println("         >>CartÃ£o se encontra bloqueado!<<");
 			}
 		} else if (op.equals("2") && cadastrado) {// CONSULTAR FATURA
 			System.out.println(CartaoBO.consultaFaturasCredito());
@@ -241,13 +246,54 @@ public class Main {
 			String dataVencimento = escolherDataVencimento();
 			System.out.println(
 					CartaoBO.alteraDataVencimento(dataVencimento) ? "\n          >>Data alterada com sucesso!<<\n"
-							: "        >>Houve um erro na alteração da Data!<<");
+							: "        >>Houve um erro na alteraÃ§Ã£o da Data!<<");
 		} else if (op.equals("4") && cadastrado) {// PAGAMENTO DE FATURA
 			System.out.println("\n>>Fatura atual:" + utils.convertToReais(credito.getValorFatura()));
 			double valorPagamento = Double.parseDouble(utils.lerConsole("Digite o valor que deseja pagar: "));
 			System.out.println(CartaoBO.debitarFaturaCredito(valorPagamento));
 		} else if (op.equals("5") && cadastrado) {// BLOQUEIA CARTON
 			exibeAtivacao(ativado, 2);// 1 = debito 2= credito
+		} else if (op.equals("6") && cadastrado) {// APOLICE DO SEGURO
+			buscaOperacoesDeSeguro();
+		}
+	}
+
+	private static void buscaOperacoesDeSeguro() {
+		Apolice apolice = ApoliceBO.buscaApolice();//VERIFICA SE EXISTE APOLICE NO CARTAO DO USUARIO
+		if(apolice != null) {
+			Menus.exibeOpcoesApolice(true);
+		}
+		else {
+			Menus.exibeOpcoesApolice(false);
+		}
+		
+		String op = utils.lerConsole("DIGITE A OPERAÃ‡ÃƒO: ");
+		if (op.equals("*")) {//CONTRATAÃ‡ÃƒO APOLICE SEGURO
+			Menus.exibeMenuOpcoesSeguro();
+			String opcaoTipoSeguro = UtilFormatConsole.readConsole();
+			apolice = ApoliceBO.CriaApoliceProvisoria(opcaoTipoSeguro);
+			Menus.exibeApolice(apolice, ContaBO.retornaContaPrincipal());
+			Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃƒO","CONFIRMA AS CONDIÃ‡OES?");
+
+			if (UtilFormatConsole.readConsole().equals("1")) {
+				utils.loading("\n\n        Contratando seguro");
+				System.out.println(ApoliceBO.CriaApolice(apolice) ? "\n      >>ApÃ³lice do seguro criada com sucesso!<<"
+						: "\n      Houve um erro na contrataÃ§Ã£o<<");
+			}else {
+				System.out.println("\n     >>AquisiÃ§Ã£o do seguro cancelada pelo usuÃ¡rio!<<");
+			}
+		} else if (op.equals("1")) { //VISUALIZAR SEGURO
+			Menus.exibeApolice(apolice, ContaBO.retornaContaPrincipal());
+		} else if (op.equals("2")) { // CANCELAR SEGURO
+			Menus.exibeDetalhesApolice(apolice);
+			Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃƒO","CANCELAR APÃ“LICE?");
+			if (UtilFormatConsole.readConsole().equals("1")) {
+				utils.loading("\n\n        Cancelando seguro");
+				ApoliceBO.deletaApolice();
+				System.out.println("      >>Cancelamento de seguro efetuado com sucesso!<<");
+			}else {
+				System.out.println("      >>NÃ£o foi possivel o cancelamento do seguro!<<");
+			}
 		}
 	}
 
@@ -263,18 +309,18 @@ public class Main {
 		}
 	}
 
-	// BUSCA OPERAÇÕES E EXECUTA OPERAÇÕES DO MENU CRÉDITO
+	// BUSCA OPERAï¿½ï¿½ES E EXECUTA OPERAï¿½ï¿½ES DO MENU CRï¿½DITO
 	private static void buscaOperacaoDebito(String op, boolean cadastrado, boolean ativado, CartaoDebito debito) {
 		if (op.equals("*")) {
 			String numBandeira = retornaBandeira();
 			if (!numBandeira.equals("") || !numBandeira.equals("0") && cadastrado) {
 				// SETANDO SENHA
 				String senha = retornaSenha();
-				utils.loading("\n       Criando cartão de débito");
+				utils.loading("\n       Criando cartÃ£o de dÃ©bito");
 				if (CartaoBO.cadastraCartaoDebito(numBandeira, senha, true, returnLimite())) {
-					System.out.println("     >>Cartão de débito criado com sucesso!<<    ");
+					System.out.println("     >>CartÃ£o de dÃ©bito criado com sucesso!<<    ");
 				} else {
-					System.err.println("\n     >>Houve um erro ao criar o cartão!<<     ");
+					System.err.println("\n     >>Houve um erro ao criar o cartÃ£o!<<     ");
 				}
 			}
 		} else if (op.equals("1") && cadastrado) {// COMPRAR
@@ -289,16 +335,16 @@ public class Main {
 			double novoLimiteTransacao = returnLimite();
 			System.out.println(CartaoBO.alterarLimitePorTransacao(novoLimiteTransacao)
 					? "\n          >>Limite alterado com sucesso!<<\n"
-					: "        >>Houve um erro na alteração do limite!<<");
+					: "        >>Houve um erro na alteraÃ§Ã£o do limite!<<");
 		} else if (op.equals("4") && cadastrado) {// BLOQUEIA CARTON
 			exibeAtivacao(ativado, 1);// 1 = debito 2= credito
 		}
 	}
 
-// retorna o limite com base na opçao selicionada
+// retorna o limite com base na opÃ§ao selicionada
 	private static double returnLimite() {
 		Menus.exibeLimites();// EXIBE LIMITES NO CONSOLE
-		String opLimite = utils.lerConsole("|Digite a operação do Limite:");
+		String opLimite = utils.lerConsole("|Digite a operaÃ§Ã£o do Limite:");
 		if (opLimite.equals("1")) {
 			return 100.0;
 		} else if (opLimite.equals("2")) {
@@ -313,13 +359,13 @@ public class Main {
 		return 100.0;
 	}
 
-// retorna a bandeira do cartão com base na opcao selecionada
+// retorna a bandeira do cartï¿½o com base na opcao selecionada
 	public static String retornaBandeira() {
 		Menus.exibeBandeirasCartoes();
-		String numBandeira = utils.lerConsole("|Digite a operação da bandeira: ");
+		String numBandeira = utils.lerConsole("|Digite a operaÃ§Ã£o da bandeira: ");
 		// SETANDO BANDEIRA
 		if (numBandeira.equals("0")) {// VOLTA MENU ANTERIOR
-			System.out.println("\n\nCancelou a operação!");
+			System.out.println("\n\nCancelou a operaÃ§Ã£o!");
 
 		} else if (numBandeira.equals("1"))// VISA
 		{
@@ -345,7 +391,7 @@ public class Main {
 
 		} else {
 			boolean operacao = (tipo == 1) ? CartaoBO.ativaDesativaDebito(true) : CartaoBO.ativaDesativaCredito(true);
-			System.out.println((operacao) ? "\n     >>Cartão desbloqueado!<<     \n"
+			System.out.println((operacao) ? "\n     >>CartÃ£o desbloqueado!<<     \n"
 					: "\n     >>Houve um erro no desbloqueio<<     \n");
 		}
 	}
@@ -415,7 +461,7 @@ public class Main {
 				System.out.println("           >>>Pix removido com sucesso!<<<    ");
 				break;
 			} else {
-				System.err.println("           >>>O id do pix não existe!<<<    ");
+				System.err.println("           >>>O id do pix nï¿½o existe!<<<    ");
 			}
 
 		}
@@ -432,17 +478,17 @@ public class Main {
 	private static void exibirOpcoesChavesPixCadastro() {
 		while (true) {
 			Menus.exibeTiposChavesPix();
-			String op = utils.lerConsole("|Digite a opção: ");
+			String op = utils.lerConsole("|Digite a opÃ§Ã£o: ");
 			if (buscaOperacaoTipoPix(op)) {
 				System.out.println("\n   >>Chave pix registrada com sucesso!<<  ");
 				break;
 			} else {
-				System.out.println("\n   >>Erro na chave pix ou pix já existe, Digite novamente!<<  ");
+				System.out.println("\n   >>Erro na chave pix ou pix jï¿½ existe, Digite novamente!<<  ");
 			}
 		}
 	}
 
-//VERIFICA TIPO DE OPERACAO PIX E RETORNA MSG TOMANDO UMA AÇÃO
+//VERIFICA TIPO DE OPERACAO PIX E RETORNA MSG TOMANDO UMA Aï¿½ï¿½O
 	// int idCC, int idCP, TipoChavePix tipoChavePix, String cpf, boolean b
 	// int tipoChavePix, String conteudoChave,int chave, boolean b
 	private static boolean buscaOperacaoTipoPix(String op) {
@@ -473,7 +519,8 @@ public class Main {
 		String textoCompleto = "";
 		if (ContaBO.cc != null && ContaBO.cp != null) {
 			textoCompleto = PixBO.exibirChavesPix(ContaBO.cc.getNumero(), ContaBO.cp.getNumero());
-			System.out.println(textoCompleto);
+			// System.out.println(textoCompleto);
+			UtilFormatConsole.writeConsoleQuebraLinha(textoCompleto, Utils.getLineCount(textoCompleto));
 		} else if (ContaBO.cc != null) {
 			textoCompleto = PixBO.exibirChavesPix(ContaBO.cc.getNumero(), "0");
 			System.out.println(textoCompleto);
@@ -483,7 +530,7 @@ public class Main {
 		}
 	}
 
-	// VERIFICA O BANCO SE CONTEM CONTA E EXIBE A INFORMAÇÃO
+	// VERIFICA O BANCO SE CONTEM CONTA E EXIBE A INFORMAï¿½ï¿½O
 	private static void buscaContaCadastrada(int op) {
 		if (op == 0) {
 			logado = true;

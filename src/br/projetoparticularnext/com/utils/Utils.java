@@ -12,11 +12,16 @@ import java.util.UUID;
 public class Utils {
 	Scanner ler = new Scanner(System.in);
 
-	// METODO QUE LÊ O CONSOLE E RETORNA UMA STRING(TEXTO)
+	// METODO QUE Lï¿½ O CONSOLE E RETORNA UMA STRING(TEXTO)
 	public String lerConsole(String texto) {
 		System.out.print(texto);
 		String textoDigitado = ler.nextLine();
 		return textoDigitado;
+	}
+//QUANTIA DE LINHAS NA STRING
+	public static int getLineCount(String text) {
+
+		return text.split("[\n|\r]").length;
 	}
 
 	public void fechaConsole() {
@@ -40,23 +45,31 @@ public class Utils {
 		return sdf.format(Calendar.getInstance().getTime());
 	}
 
-	// ADD UM MES A DATA  15/05/05
+	// ADD UM MES A DATA 15/05/05
 	public static String getDateAdd1Month() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, 1);
 		return sdf.format(calendar.getTime());
 	}
-	// ADD UM MES A DATA
-		public static String returnDataDiaDefinido(String dataSemFormatar) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.MONTH, 1);
-			calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dataSemFormatar));
-			return sdf.format(calendar.getTime());
-		}
+	// add dias com base no int recebido
+	public static String getDateAddDays(int dias) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, dias);
+		return sdf.format(calendar.getTime());
+	}
 
-	// Método sleep em 200 milisegundos
+	// ADD UM MES A DATA
+	public static String returnDataDiaDefinido(String dataSemFormatar) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, 1);
+		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dataSemFormatar));
+		return sdf.format(calendar.getTime());
+	}
+
+	// Mï¿½todo sleep em 200 milisegundos
 	public static void sleep() {
 		try {
 			Thread.sleep(200);
@@ -66,25 +79,26 @@ public class Utils {
 	}
 
 	// Barrinha de carregamento em milisegundos
-	// padrão é 10
+	// padrï¿½o ï¿½ 10
 	public static void loading(String text) {
 		sleep();
-		System.out.print(text);
-		for (int i = 0; i < 10; i++) {
+		System.out.print("      " + text);
+		for (int i = 0; i < 8; i++) {
 			System.out.print(".");
 			sleep();
 		}
 		System.out.println();
 		sleep();
 	}
-	// GERADOR DE BLOCOS DE NUMEROS ALEATÓRIOS
+
+	// GERADOR DE BLOCOS DE NUMEROS ALEATï¿½RIOS
 	public static String geraBlocosNumeros(int qtd) {
-		 Random r = new Random();
-		 String randomNumber = "";
-		   for(int x = 0;x < 4; x++) {
-			    randomNumber += String.format(" "+"%0"+qtd+"d", r.nextInt(1001));
-		   }
-		    return randomNumber;
+		Random r = new Random();
+		String randomNumber = "";
+		for (int x = 0; x < 4; x++) {
+			randomNumber += String.format(" " + "%0" + qtd + "d", r.nextInt(1001));
+		}
+		return randomNumber;
 	}
 
 }

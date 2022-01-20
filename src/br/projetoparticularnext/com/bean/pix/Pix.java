@@ -1,18 +1,12 @@
 package br.projetoparticularnext.com.bean.pix;
 
-import java.util.Date;
+import br.projetoparticularnext.com.utils.Const;
 
-import br.projetoparticularnext.com.bean.Transacao;
-import br.projetoparticularnext.com.bean.conta.Conta;
-
-public class Pix implements Transacao {
+public class Pix  {
 	public int id;
 	public TipoChavePix tipoChave;
-	public double valor;
-	public Date data;
 	public String conteudoChave;
 	public boolean isAtivado;
-	private static int pixCriados = 1;
 
 	public Pix() {
 		id = novoId();
@@ -33,21 +27,6 @@ public class Pix implements Transacao {
 		this.tipoChave = tipoChave;
 	}
 
-	public double getValor() {
-		return valor;
-	}
-
-	public void setValor(double valor) {
-		this.valor = valor;
-	}
-
-	public Date getData() {
-		return data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
 
 	public String getConteudoChave() {
 		return conteudoChave;
@@ -66,17 +45,7 @@ public class Pix implements Transacao {
 	}
 
 	private int novoId() {
-		return pixCriados++;
-	}
-
-	@Override
-	public void transferir() {
-		
-	}
-
-	@Override
-	public void descontarTaxas() {
-
+		return Const.PIX_CRIADOS++;
 	}
 
 }

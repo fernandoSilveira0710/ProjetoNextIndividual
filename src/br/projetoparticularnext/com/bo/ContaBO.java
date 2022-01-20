@@ -9,6 +9,7 @@ import br.projetoparticularnext.com.bean.cliente.TipoCliente;
 import br.projetoparticularnext.com.bean.conta.Conta;
 import br.projetoparticularnext.com.bean.conta.TipoConta;
 import br.projetoparticularnext.com.utils.Banco;
+import br.projetoparticularnext.com.utils.Const;
 import br.projetoparticularnext.com.utils.Utils;
 import br.projetoparticularnext.com.utils.ValidaCPF;
 
@@ -45,29 +46,29 @@ public class ContaBO {
 		if (cc != null) {
 			if (cc.getData().equals(Utils.dataAtual())) {
 				double valor = cc.getSaldo();
-				double taxa = valor * (0.45 / 100);
+				double taxa = valor * (Const.TAXA_CREDITO / 100);
 				valor -= taxa;
 				System.out.println("Taxando: " + Utils.convertToReais(taxa));
 				cc.setSaldo(valor);
 				cc.setData(Utils.getDateAdd1Month());
-				System.out.println("Próximo mês de cobrança: " + cc.getData());
+				System.out.println("Prï¿½ximo mï¿½s de cobranï¿½a: " + cc.getData());
 			}
 		} else if (cp != null) {
 			if (cp.getData().equals(Utils.dataAtual())) {
 				double valor = cp.getSaldo();
-				double taxa = valor * (0.03 / 100);
+				double taxa = valor * (Const.TAXA_DEBITO / 100);
 				valor += taxa;
 				System.out.println("Rendendo: " + Utils.convertToReais(taxa));
 				cp.setSaldo(valor);
 				cp.setData(Utils.getDateAdd1Month());
-				System.out.println("Próximo mês de cobrança: " + cp.getData());
+				System.out.println("Prï¿½ximo mï¿½s de cobranï¿½a: " + cp.getData());
 
 			}
 		}
 
 	}
 
-	// VERIFICA SE SENHA É COMPATIVEL COM CONTA
+	// VERIFICA SE SENHA ï¿½ COMPATIVEL COM CONTA
 	public static boolean testaLogin(String cpfConsole) {
 		if (Banco.consultaCpfBanco(cpfConsole)) {
 			return true;
@@ -82,9 +83,9 @@ public class ContaBO {
 		String retorno = "";
 		int cont = 0;
 		for (Conta conta : listConta) {
-			if(cont == 0) {
-				retorno += "\n\n>>Bem vindo "+conta.getCliente().getNome()
-						+"    >>Tipo conta: "+conta.getCliente().getTipo().name();
+			if (cont == 0) {
+				retorno += "\n\n>>Bem vindo " + conta.getCliente().getNome() + "    >>Tipo conta: "
+						+ conta.getCliente().getTipo().name();
 				cont++;
 			}
 			if (conta.getTipoConta() == TipoConta.ContaCorrente) {
@@ -97,7 +98,7 @@ public class ContaBO {
 			if (conta.getTipoConta() == TipoConta.ContaPoupanca) {
 				id = 2;
 				cp = conta; // SETA CONTA EM CONTA POUPANCA
-				retorno += "\n>>Numero poupança: " + conta.getNumero() + "    >>Saldo:"
+				retorno += "\n>>Numero poupanï¿½a: " + conta.getNumero() + "    >>Saldo:"
 						+ utils.convertToReais(consultarSaldo(conta));
 				tipo++;
 			}
@@ -169,35 +170,36 @@ public class ContaBO {
 				if ((consultarSaldo(cc) - taxa) >= valorDeTransferencia) {
 					saque(5.60, cc);// DESCONTA TAXA
 					verifica = transferir(contaDestino, valorDeTransferencia, cc);
-					resposta[0] = "\nTaxa de " + Utils.convertToReais(taxa) + " foi aplicada \npor se tratar de contas diferentes";
+					resposta[0] = "\nTaxa de " + Utils.convertToReais(taxa)
+							+ " foi aplicada \npor se tratar de contas diferentes";
 				} else {
-					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " é aplicada a sua " + tipoTransferencia
-							+ " Entre contas diferentes!";
+					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " ï¿½ aplicada a sua "
+							+ tipoTransferencia + " Entre contas diferentes!";
 
 				}
 			} else if (tipo && contaDestino.getTipoConta().ordinal() == 1) {
 				if ((consultarSaldo(cp) - taxa) >= valorDeTransferencia) {
 					saque(5.60, cp);// DESCONTA TAXA
 					verifica = transferir(contaDestino, valorDeTransferencia, cp);
-					resposta[0] = "\nTaxa de " +  Utils.convertToReais(taxa) + " foi aplicada por se tratar de contas diferentes";
+					resposta[0] = "\nTaxa de " + Utils.convertToReais(taxa)
+							+ " foi aplicada por se tratar de contas diferentes";
 				} else {
-					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " é aplicada a sua " + tipoTransferencia
-							+ " entre contas diferentes!";
+					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " ï¿½ aplicada a sua "
+							+ tipoTransferencia + " entre contas diferentes!";
 				}
 			} else if (tipo && contaDestino.getTipoConta().ordinal() == 0) {
 				verifica = transferir(contaDestino, valorDeTransferencia, cp);
 			}
 			if (verifica) {
 				resposta[0] += "\n>>" + tipoTransferencia + " de " + utils.convertToReais(valorDeTransferencia)
-						+ " para " + contaDestino.getCliente().getNome()
-						+ " \nrealizado com sucesso!<< \n\n";
+						+ " para " + contaDestino.getCliente().getNome() + " \nrealizado com sucesso!<< \n\n";
 				resposta[1] = "0";
 			} else {
 				resposta[0] += "\nErro em " + tipoTransferencia + "!Saldo insuficiente \n";
 				resposta[1] = "1";
 			}
 		} else {
-			resposta[0] = "Esta conta não existe! \n";
+			resposta[0] = "Esta conta nï¿½o existe! \n";
 			resposta[1] = "2";
 		}
 	}
@@ -302,6 +304,17 @@ public class ContaBO {
 				return "0";
 		} else
 			return "0";
+	}
+
+	// RETORNA CONTA PRINCIPAL
+	public static Conta retornaContaPrincipal() {
+		if (cc != null) {
+			return cc;
+		} else if (cp != null) {
+			return cp;
+		}
+		return null;
+
 	}
 
 	// ZERAR CADASTROS ALOCADOS EM MEMORIA

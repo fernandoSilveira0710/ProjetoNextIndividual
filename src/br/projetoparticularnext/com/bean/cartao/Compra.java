@@ -2,6 +2,7 @@ package br.projetoparticularnext.com.bean.cartao;
 
 import java.util.Calendar;
 
+import br.projetoparticularnext.com.utils.Const;
 import br.projetoparticularnext.com.utils.Utils;
 
 public class Compra {
@@ -9,7 +10,6 @@ public class Compra {
 	private double valor;
 	private String descricao;
 	private int id;
-	private static int idAutoIncrementavel = 1;// auto incremento
 	
 	public Compra(double valor, String descricao) {
 		this.id = newId();
@@ -19,7 +19,7 @@ public class Compra {
 	}
 
 	private int newId() {
-		return idAutoIncrementavel++;
+		return Const.COMPRAS_REALIZADAS++;
 	}
 
 	public String getDataCompra() {

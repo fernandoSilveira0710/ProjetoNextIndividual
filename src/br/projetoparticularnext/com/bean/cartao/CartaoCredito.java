@@ -13,6 +13,7 @@ public class CartaoCredito extends Cartao {
 	private List<Compra> compras;
 	private String dataVencimento;
 	private double valorFatura;
+	private Apolice apolice;
 
 	public CartaoCredito(String bandeira, String senha, boolean isAtivo, double limite, String dataVencimento) {
 		super(Utils.geraBlocosNumeros(4), bandeira, senha, isAtivo);// cartao pede
@@ -54,5 +55,22 @@ public class CartaoCredito extends Cartao {
 	public void setValorFatura(double valorFatura) {
 		this.valorFatura = valorFatura;
 	}
+
+
+	public Apolice getApolice() {
+		return apolice;
+	}
+
+
+	public void setApolice(Apolice apolice) {
+		this.apolice = apolice;
+	}
+
+
+	public void setCompras(List<Compra> compras) {
+		this.compras = compras;
+	}
+	
+	
 
 }

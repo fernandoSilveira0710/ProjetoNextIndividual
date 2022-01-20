@@ -1,37 +1,52 @@
 package br.projetoparticularnext.com.utils;
 
+import java.util.ArrayList;
+
+import br.projetoparticularnext.com.bean.cartao.Apolice;
+import br.projetoparticularnext.com.bean.conta.Conta;
 import br.projetoparticularnext.com.bo.ContaBO;
 
 public class Menus {
 	private static Utils utils = new Utils();
+	static ArrayList<String> listText = new ArrayList<String>();
 
-	// EXIBE MENU COM AS OPÇÕES DE PIX
+	// EXIBE MENU COM AS OPï¿½ï¿½ES DE PIX
 	public static void exibeMenuPix() {
-		System.out.println(" _________________________________ ");
-		System.out.println("|----------  MENU PIX   ----------|");
-		System.out.println("|1 - CADASTRAR CHAVE PIX          |");
-		System.out.println("|2 - VISUALIZAR CHAVES PIX        |");
-		System.out.println("|3 - TRANSFERIR VIA PIX           |");
-		System.out.println("|4 - DELETAR CHAVE PIX            |");
-		System.out.println("|0 - VOLTAR AO MENU ANTERIOR      |");
-		System.out.println("|_________________________________|");
+		String[] textos = new String[7];
+		UtilFormatConsole.writeConsole("    ----------  MENU PIX   ----------");
+		textos[0] = "  ";
+		textos[1] = "1 - CADASTRAR CHAVE PIX          ";
+		textos[2] = "2 - VISUALIZAR CHAVES PIX        ";
+		textos[3] = "3 - TRANSFERIR VIA PIX           ";
+		textos[4] = "4 - DELETAR CHAVE PIX            ";
+		textos[5] = "0 - VOLTAR AO MENU ANTERIOR      ";
+		textos[6] = "  ";
+
+		UtilFormatConsole.writeConsole(textos, textos.length);
 	}
 
 	public static void exibeTiposChavesPix() {
-		System.out.println(" _________________");
-		System.out.println("|--- TIPO PIX ----|");
-		System.out.println("|0 - CPF          |");
-		System.out.println("|1 - EMAIL        |");
-		System.out.println("|2 - TELEFONE     |");
-		System.out.println("|3 - ALEATORIO    |");
-		System.out.println("|_________________|");
+		String[] textos = new String[6];
+		UtilFormatConsole.writeConsole("    ----------  TIPO PIX   ----------");
+		textos[0] = "  ";
+		textos[1] = "0 - CPF          ";
+		textos[2] = "1 - EMAIL        ";
+		textos[3] = "2 - TELEFONE     ";
+		textos[4] = "3 - ALEATORIO    ";
+		textos[5] = "  ";
+		UtilFormatConsole.writeConsole(textos, textos.length);
 	}
 
 	// EXIBE SAIR PARA OUTRO MENU
 	public static boolean exibeOpcaoConta(String titulo) {
 		if (ContaBO.id == 3) {
-			System.out.println("-------  " + titulo + "  -----");
-			String resposta = utils.lerConsole("| 0 - CORRENTE | 1 - POUPANCA |" + "\n|DIGITE A OPÇÃO:");
+			String[] textos = new String[4];
+			textos[0] = "  ";
+			textos[1] = "    ----------  " + titulo + "   ----------";
+			textos[2] = "         0 - CORRENTE | 1 - POUPANCA       ";
+			textos[3] = "  ";
+			UtilFormatConsole.writeConsole(textos, textos.length);
+			String resposta = utils.lerConsole("DIGITE A OPÃ‡ÃƒO: ");
 			if (resposta.equals("0")) {
 				System.out.println("|___________________________  |");
 				return false;
@@ -48,88 +63,186 @@ public class Menus {
 	}
 
 	public static void exibeOpcoesConta() {
-		System.out.println(" ___________________________________");
-		System.out.println("|--------  MENU PRINCIPAL  ---------|");
-		System.out.println("|1 - TRANSFERIR        2 - DEPOSITO |");
-		System.out.println("|3 - CONSULTAR SALDO   4 - SACAR    |");
-		System.out.println("|5 - CRÉDITO           6 - DÉBITO   |");
-		System.out.println("|7 - PIX               0 - SAIR     |");
-		System.out.println("|___________________________________|");
+		UtilFormatConsole.writeConsole(" ----------  MENU PRINCIPAL   ----------");
+		String[] textos = new String[6];
+		textos[0] = "  ";
+		textos[1] = " 1 - TRANSFERIR        2 - DEPOSITO ";
+		textos[2] = " 3 - CONSULTAR SALDO   4 - SACAR    ";
+		textos[3] = " 5 - CRÃ‰DITO           6 - DÃ‰BITO   ";
+		textos[4] = " 7 - PIX               0 - SAIR     ";
+		textos[5] = "  ";
+		UtilFormatConsole.writeConsole(textos, textos.length);
 	}
 
-	// EXIBE OPÇOES DE CARTÕES
-	public static void exibeOpcoesCartaoCredito(boolean cadastrado, boolean ativado ) {
-		System.out.println(" ___________________________");
-		System.out.println("|---- CARTÃO DE CRÉDITO ----|");
-		if(!cadastrado)System.out.println("|* - CRIAR CARTÃO DE CRÉDITO|");
-		if(cadastrado)System.out.println("|1 - COMPRAR                |");
-		if(cadastrado)System.out.println("|2 - CONSULTAR FATURA       |");
-		if(cadastrado)System.out.println("|3 - ALTERAR VENCIMENTO     |");
-		if(cadastrado)System.out.println("|4 - PAGAMENTO DE FATURA    |");
-		if(cadastrado && ativado)System.out.println("|5 - BLOQUEAR CARTAO        |");
-		if(cadastrado && !ativado)System.out.println("|5 - DESBLOQUEAR CARTAO     |");
-		System.out.println("|0 - VOLTAR MENU ANTERIOR   |");
-		System.out.println("|___________________________|");
+	// EXIBE OPï¿½OES DE CARTï¿½ES
+	public static void exibeOpcoesCartaoCredito(boolean cadastrado, boolean ativado) {
+		listText.clear();
+		UtilFormatConsole.writeConsole(" --------  CARTÃƒO DE CRÃ‰DITO  --------");
+		listText.add("");
+		if (!cadastrado)
+			listText.add(" * - CRIAR CARTÃƒO DE CRÃ‰DITO");
+		if (cadastrado)
+			listText.add(" 1 - COMPRAR                ");
+		if (cadastrado)
+			listText.add(" 2 - CONSULTAR FATURA       ");
+		if (cadastrado)
+			listText.add(" 3 - ALTERAR VENCIMENTO     ");
+		if (cadastrado)
+			listText.add(" 4 - PAGAMENTO DE FATURA    ");
+		if (cadastrado && ativado)
+			listText.add(" 5 - BLOQUEAR CARTAO        ");
+		if (cadastrado && !ativado)
+			listText.add(" 5 - DESBLOQUEAR CARTAO     ");
+		if (cadastrado && ativado)
+			listText.add(" 6 - SEGURO    ");
+		listText.add(" 0 - VOLTAR MENU ANTERIOR   ");
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
 
-	// EXIBE OPÇOES DE CARTÕES
-	public static void exibeOpcoesCartaoDebito(boolean cadastrado, boolean ativado ) {
-		              System.out.println(" ______________________________");
-		              System.out.println("|----- CARTÃO DE DÉBITO -------|");
-		if(!cadastrado)System.out.println("|* - CRIAR CARTÃO DE DÉBITO   |");
-		if(cadastrado)System.out.println("|1 - COMPRAR                   |");
-		if(cadastrado)System.out.println("|2 - CONSULTAR EXTRATO         |");
-		if(cadastrado)System.out.println("|3 - ALTERAR LIMITE P/TRANSACAO|");
-		if(cadastrado && ativado)System.out.println("|4 - BLOQUEAR CARTAO        |");
-		if(cadastrado && !ativado)System.out.println("|4 - DESBLOQUEAR CARTAO     |");
-		              System.out.println("|0 - VOLTAR MENU ANTERIOR      |");
-		              System.out.println("|______________________________|");
+	// EXIBE OPÃ‡OES DE CARTÃ•ES
+	public static void exibeOpcoesCartaoDebito(boolean cadastrado, boolean ativado) {
+		listText.clear();
+		UtilFormatConsole.writeConsole(" --------  CARTÃƒO DE DÃ‰BITO  --------");
+		listText.add("");
+		if (!cadastrado)
+			listText.add(" * - CRIAR CARTÃƒO DE DÃ‰BITO   ");
+		if (cadastrado)
+			listText.add(" 1 - COMPRAR                   ");
+		if (cadastrado)
+			listText.add(" 2 - CONSULTAR EXTRATO         ");
+		if (cadastrado)
+			listText.add(" 3 - ALTERAR LIMITE P/TRANSACAO");
+		if (cadastrado && ativado)
+			listText.add(" 4 - BLOQUEAR CARTAO        ");
+		if (cadastrado && !ativado)
+			listText.add(" 4 - DESBLOQUEAR CARTAO     ");
+		listText.add(" 0 - VOLTAR MENU ANTERIOR   ");
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
+
 	public static void exibeBandeirasCartoes() {
-		System.out.println(" _________________________");
-		System.out.println("|--- ESCOLHA A BANDEIRA --|");
-		System.out.println("|1 - VISA                 |");
-		System.out.println("|2 - MASTERCARD           |");
-		System.out.println("|3 - ELO      			  |");
-		System.out.println("|0 - CANCELAR             |");
-		System.out.println("|_________________________|");
+		listText.clear();
+		UtilFormatConsole.writeConsole(" --------  ESCOLHA A BANDEIRA  --------");
+		listText.add("");
+		listText.add(" 1 - VISA    2 - MASTERCARD    ");
+		listText.add(" 3 - ELO     0 - CANCELAR");
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
+
 	public static void exibeDatasVencimento() {
-		System.out.println(" _____________");
-		System.out.println("|--- DATA --- |");
-		System.out.println("|1 - DIA 1    |");
-		System.out.println("|2 - DIA 5    |");
-		System.out.println("|3 - DIA 10   |");
-		System.out.println("|4 - DIA 15   |");
-		System.out.println("|0 - CANCELAR |");
-		System.out.println("|____________ |");
+		listText.clear();
+		UtilFormatConsole.writeConsole(" ---------------  DATA   ---------------");
+		listText.add("");
+		listText.add(" 1 - DIA 1    2 - DIA 5");
+		listText.add(" 3 - DIA 10   4 - DIA 15");
+		listText.add(" 0 - CANCELAR");
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
+
 	public static void exibeLimites() {
-		System.out.println(" ___________________");
-		System.out.println("|LIMITES P/TRANSACAO|");
-		System.out.println("|1 - R$100,00       |");
-		System.out.println("|2 - R$500,00       |");
-		System.out.println("|3 - R$1000,00      |");
-		System.out.println("|4 - R$5000,00      |");
-		System.out.println("|5 - R$10000,00     |");
-		System.out.println("|___________________|");
+		listText.clear();
+		UtilFormatConsole.writeConsole(" -----------  LIMITES P/TRANSACAO   -----------");
+		listText.add("");
+		listText.add(" 1 - R$100,00    2 - R$500,00");
+		listText.add(" 3 - R$1000,00   4 - R$5000,00");
+		listText.add(" 5 - R$10000,00");
+		listText.add(" ");
+		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
-	
-	public static void dadosCartoes(String numero, String validade, double fatura, double limite,String descrLimite, boolean status) {
+
+	public static void dadosCartoes(String numero, String validade, double fatura, double limite, String descrLimite,
+			boolean status) {
+		listText.clear();
 		String tipo = "";
-		if(status) tipo = "desbloqueado";
-		else tipo = "bloqueado";
-		System.out.println(" _________________________________________");
-		System.out.println("|-------- DADOS DO CARTAO ----------------|");
-		System.out.println("| Limite "+descrLimite+":"+Utils.convertToReais(limite)+"         ");
-		System.out.println("| numero:"+numero.toUpperCase()+"         ");
-		if(!validade.equals(""))System.out.println("| vencimento:"+validade.toUpperCase()+"       ");
-		if(!validade.equals(""))System.out.println("| fatura:"+Utils.convertToReais(fatura)+"       status:"+tipo);
-		System.out.println(" _________________________________________");
+		if (status)
+			tipo = "desbloqueado";
+		else
+			tipo = "bloqueado";
+		listText.add(" --------  DADOS DO CARTAO   -----------");
+		listText.add(" Limite " + descrLimite + ":" + Utils.convertToReais(limite) + "         ");
+		listText.add(" numero:" + numero.toUpperCase() + "         ");
+		if (!validade.equals(""))
+			listText.add(" vencimento:" + validade.toUpperCase() + "       ");
+		if (!validade.equals(""))
+			listText.add(" fatura:" + Utils.convertToReais(fatura) + "     status:" + tipo);
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
+	}
+
+	public static void exibeMenuOpcoesSeguro() {
+		listText.clear();
+		listText.add("");
+		UtilFormatConsole.writeConsole(" --------  AQUISIÃ‡ÃƒO DE SEGURO  -------- ");
+		listText.add(" -----  ESCOLHA A OPÃ‡ÃƒO DE SEGURO  ---- ");
+		listText.add("");
+		listText.add(" 1 - SEGURO DE MORTE");
+		listText.add(" 2 - SEGURO DE INVALIDEZ ");
+		listText.add(" 3 - SEGURO DE DESEMPREGO ");
+		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
 
 	public static void exibeMenuCompra() {
 		System.out.println(" _________________________");
 		System.out.println("|------ NOVA COMPRA ------|");
+	}
+
+	public static void exibeOpcoesApolice(boolean cadastrado) {
+		listText.clear();
+		UtilFormatConsole.writeConsole(" -------  APÃ“LICE DO SEGURO  ----------");
+		listText.add("");
+		if (!cadastrado)
+			listText.add(" * - ACIONAR SEGURO   ");
+		if (cadastrado)
+			listText.add(" 1 - VISUALIZAR APÃ“LICE DO SEGURO                   ");
+		if (cadastrado)
+			listText.add(" 2 - CANCELAR APÃ“LICE DO SEGURO                   ");
+		listText.add(" 0 - VOLTAR MENU ANTERIOR   ");
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
+	}
+
+	public static void exibeApolice(Apolice apolice, Conta conta) {
+		listText.clear();
+		listText.add(" --------  CONTRATO DO SEGURO   --------");
+		listText.add(" -------  DADOS DO CONTRATANTE  --------");
+		listText.add("-Nome do segurado: " + conta.getCliente().getNome());
+		listText.add("-CPF do segurado: "+ conta.getCliente().getCpf());
+		listText.add("-Data da ContrataÃ§Ã£o: " + apolice.getDataAssinatura());
+		listText.add("-Data Limite Carencia: "+ apolice.getDataCarencia());
+		listText.add("-Tipo de Seguro contratado: " + apolice.getSeguro().getTipoSeguro().name());
+		listText.add("-Valor da Apolice: "+ Utils.convertToReais(apolice.getSeguro().getValorApolice())+"/ano");
+		listText.add("       --------  REGRAS   --------");
+		for (int x = 0; x < apolice.getSeguro().getRegras().length; x++) {
+			listText.add(apolice.getSeguro().getRegras()[x]);
+		}
+		listText.add("");
+		listText.add("       --------  CONDIÃ‡ÃƒO   --------");
+		listText.add("Eu "+conta.getCliente().getNome()+" aceito todas as    condiÃ§Ãµes propostas "
+				+ "neste contrato estipulado na presente data.");
+		listText.add("Todos os nossos seguros garantem recuperaÃ§Ã£o de 100% do valor investido pelo    "
+				+ "segurado.");
+		listText.add("CesÃ¡rio Lange 30 de Fevereiro de 1850          Empresa Fulano de tal LTDA");
+		UtilFormatConsole.writeConsole(listText, listText.size());
+	}
+	
+	public static void exibeDetalhesApolice(Apolice apolice) {
+		listText.clear();
+		listText.add("       --- DETALHES DA APÃ“LICE --- ");
+		listText.add("-Data da ContrataÃ§Ã£o: "+apolice.getDataAssinatura());
+		listText.add("-Tipo de Seguro: "+apolice.getSeguro().getNome());
+		listText.add("-Valor anual apÃ³lice: "+apolice.getSeguro().getValorApolice());
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
+	}
+	public static void exibeMenuOpcoesConfirmacao(String positivo, String negativo,String titulo) {
+		listText.clear();
+		listText.add("       --- "+titulo+" --- ");
+		listText.add("       " + positivo + "             " + negativo);
+		listText.add("");
+		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
 }

@@ -9,6 +9,7 @@ import br.projetoparticularnext.com.bean.cartao.CartaoCredito;
 import br.projetoparticularnext.com.bean.cartao.CartaoDebito;
 import br.projetoparticularnext.com.bean.cliente.Cliente;
 import br.projetoparticularnext.com.bean.pix.Pix;
+import br.projetoparticularnext.com.utils.Const;
 import br.projetoparticularnext.com.utils.Utils;
 
 public class Conta {
@@ -16,7 +17,6 @@ public class Conta {
 	private String numero;
 	private double saldo;
 	private Cliente cliente;
-	private static int contasCriadas = 1;
 	private TipoConta tipoConta;
 	private List<Pix> listPix;
 //	private List<Cartao> cartoes;
@@ -43,7 +43,7 @@ public class Conta {
 	}
 
 	private int novoId() {
-		return contasCriadas++;
+		return Const.CONTAS_CRIADAS++;
 	}
 
 	public int getId() {
@@ -59,7 +59,7 @@ public class Conta {
 	}
 
 	private String novaConta() {
-		return String.valueOf(contasCriadas++);
+		return String.valueOf(Const.NUMERO_CONTA++);
 	}
 
 	public void setSaldo(double saldo) {
