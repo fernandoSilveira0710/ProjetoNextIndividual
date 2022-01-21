@@ -1,6 +1,7 @@
 package br.projetoparticularnext.com.utils;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,6 +19,7 @@ public class Utils {
 		String textoDigitado = ler.nextLine();
 		return textoDigitado;
 	}
+
 //QUANTIA DE LINHAS NA STRING
 	public static int getLineCount(String text) {
 
@@ -41,20 +43,29 @@ public class Utils {
 
 	// RETORNA DATA ATUAL
 	public static String dataAtual() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		return sdf.format(Calendar.getInstance().getTime());
 	}
 
 	// ADD UM MES A DATA 15/05/05
 	public static String getDateAdd1Month() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, 1);
 		return sdf.format(calendar.getTime());
 	}
+
+	// ADD ANOS COM BASE NO VALOR RECEBIDO E A DATA DE HOJE
+	public static String getDateAddYears(int dataValidade) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.YEAR, dataValidade);
+		return sdf.format(calendar.getTime());
+	}
+
 	// add dias com base no int recebido
 	public static String getDateAddDays(int dias) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_MONTH, dias);
 		return sdf.format(calendar.getTime());
@@ -62,7 +73,7 @@ public class Utils {
 
 	// ADD UM MES A DATA
 	public static String returnDataDiaDefinido(String dataSemFormatar) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, 1);
 		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dataSemFormatar));
@@ -99,6 +110,16 @@ public class Utils {
 			randomNumber += String.format(" " + "%0" + qtd + "d", r.nextInt(1001));
 		}
 		return randomNumber;
+	}
+
+	public static Date readConsoleData(String data) {
+		SimpleDateFormat dataFormat = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			return dataFormat.parse(data);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

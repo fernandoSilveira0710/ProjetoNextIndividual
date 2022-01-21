@@ -1,16 +1,11 @@
 package br.projetoparticularnext.com.bean.cartao;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import br.projetoparticularnext.com.utils.Utils;
 
 public class CartaoCredito extends Cartao {
 
 
 	private double limite;
-	private List<Compra> compras;
 	private String dataVencimento;
 	private double valorFatura;
 	private Apolice apolice;
@@ -18,7 +13,6 @@ public class CartaoCredito extends Cartao {
 	public CartaoCredito(String bandeira, String senha, boolean isAtivo, double limite, String dataVencimento) {
 		super(Utils.geraBlocosNumeros(4), bandeira, senha, isAtivo);// cartao pede
 		this.limite = limite;
-		this.compras = new ArrayList<Compra>();
 		this.dataVencimento = Utils.returnDataDiaDefinido(dataVencimento);
 		this.valorFatura = 0.0;
 	}
@@ -32,13 +26,6 @@ public class CartaoCredito extends Cartao {
 		this.limite = limite;
 	}
 
-	public List<Compra> getCompras() {
-		return compras;
-	}
-
-	public void addCompra(Compra compra) {
-		this.compras.add(compra);
-	}
 
 	public String getDataVencimento() {
 		return dataVencimento;
@@ -66,10 +53,6 @@ public class CartaoCredito extends Cartao {
 		this.apolice = apolice;
 	}
 
-
-	public void setCompras(List<Compra> compras) {
-		this.compras = compras;
-	}
 	
 	
 

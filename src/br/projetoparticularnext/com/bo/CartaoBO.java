@@ -10,7 +10,7 @@ public class CartaoBO {
 		public static void faturaAutomatica() {
 			
 		}
-	// cadastra cart„o de crÈdito ou dÈbito
+	// cadastra cartÔøΩo de crÔøΩdito ou dÔøΩbito
 	// String bandeira, String senha, boolean isAtivo, double limite => CARTAO
 	// CREDITO CONTRUTOR
 	public static boolean cadastraCartaoCredito(String bandeira, String senha, boolean isAtivo, String dataVencimento) {
@@ -41,7 +41,7 @@ public class CartaoBO {
 	public static CartaoDebito recuperaCartaoDebito() {
 		return Banco.recuperaCartaoDebito();
 	}
-//DESATIVA CART√O DE CREDITO
+//DESATIVA CART√ÉO DE CREDITO
 	public static boolean ativaDesativaCredito(boolean b) {
 		return Banco.ativaDesativaCartaoCredito(b);
 	}

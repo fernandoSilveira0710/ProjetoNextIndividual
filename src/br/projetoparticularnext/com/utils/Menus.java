@@ -22,7 +22,7 @@ public class Menus {
 		textos[5] = "0 - VOLTAR AO MENU ANTERIOR      ";
 		textos[6] = "  ";
 
-		UtilFormatConsole.writeConsole(textos, textos.length);
+		UtilFormatConsole.writeConsoleArray(textos, textos.length);
 	}
 
 	public static void exibeTiposChavesPix() {
@@ -34,7 +34,7 @@ public class Menus {
 		textos[3] = "2 - TELEFONE     ";
 		textos[4] = "3 - ALEATORIO    ";
 		textos[5] = "  ";
-		UtilFormatConsole.writeConsole(textos, textos.length);
+		UtilFormatConsole.writeConsoleArray(textos, textos.length);
 	}
 
 	// EXIBE SAIR PARA OUTRO MENU
@@ -42,13 +42,11 @@ public class Menus {
 		if (ContaBO.id == 3) {
 			String[] textos = new String[4];
 			textos[0] = "  ";
-			textos[1] = "    ----------  " + titulo + "   ----------";
-			textos[2] = "         0 - CORRENTE | 1 - POUPANCA       ";
-			textos[3] = "  ";
-			UtilFormatConsole.writeConsole(textos, textos.length);
+			textos[1] = " ----------  " + titulo + "   ----------";
+			textos[2] = "      0 - CORRENTE | 1 - POUPANCA       ";
+			UtilFormatConsole.writeConsoleArray(textos, textos.length);
 			String resposta = utils.lerConsole("DIGITE A OPÇÃO: ");
 			if (resposta.equals("0")) {
-				System.out.println("|___________________________  |");
 				return false;
 			} else {
 				return true;
@@ -71,7 +69,7 @@ public class Menus {
 		textos[3] = " 5 - CRÉDITO           6 - DÉBITO   ";
 		textos[4] = " 7 - PIX               0 - SAIR     ";
 		textos[5] = "  ";
-		UtilFormatConsole.writeConsole(textos, textos.length);
+		UtilFormatConsole.writeConsoleArray(textos, textos.length);
 	}
 
 	// EXIBE OP�OES DE CART�ES
@@ -195,11 +193,13 @@ public class Menus {
 		UtilFormatConsole.writeConsole(" -------  APÓLICE DO SEGURO  ----------");
 		listText.add("");
 		if (!cadastrado)
-			listText.add(" * - ACIONAR SEGURO   ");
+			listText.add(" * - CONTRATAR SEGURO   ");
 		if (cadastrado)
-			listText.add(" 1 - VISUALIZAR APÓLICE DO SEGURO                   ");
+			listText.add(" 1 - VISUALIZAR APÓLICE DO SEGURO                ");
 		if (cadastrado)
-			listText.add(" 2 - CANCELAR APÓLICE DO SEGURO                   ");
+			listText.add(" 2 - CANCELAR APÓLICE DO SEGURO                  ");
+		if (cadastrado)
+			listText.add(" 3 - ACIONAR APÓLICE DO SEGURO                   ");
 		listText.add(" 0 - VOLTAR MENU ANTERIOR   ");
 		listText.add("");
 		UtilFormatConsole.writeConsole(listText, listText.size());
@@ -210,38 +210,50 @@ public class Menus {
 		listText.add(" --------  CONTRATO DO SEGURO   --------");
 		listText.add(" -------  DADOS DO CONTRATANTE  --------");
 		listText.add("-Nome do segurado: " + conta.getCliente().getNome());
-		listText.add("-CPF do segurado: "+ conta.getCliente().getCpf());
+		listText.add("-CPF do segurado: " + conta.getCliente().getCpf());
 		listText.add("-Data da Contratação: " + apolice.getDataAssinatura());
-		listText.add("-Data Limite Carencia: "+ apolice.getDataCarencia());
+		listText.add("-Data Limite Carencia: " + apolice.getDataCarencia());
+		listText.add("-Validade desta Apólice: " + apolice.getDataValidade());
 		listText.add("-Tipo de Seguro contratado: " + apolice.getSeguro().getTipoSeguro().name());
-		listText.add("-Valor da Apolice: "+ Utils.convertToReais(apolice.getSeguro().getValorApolice())+"/ano");
+		listText.add("-Taxa da Apolice: " + Utils.convertToReais(apolice.getSeguro().getTaxa()) + "/ano");
 		listText.add("       --------  REGRAS   --------");
 		for (int x = 0; x < apolice.getSeguro().getRegras().length; x++) {
 			listText.add(apolice.getSeguro().getRegras()[x]);
 		}
 		listText.add("");
 		listText.add("       --------  CONDIÇÃO   --------");
-		listText.add("Eu "+conta.getCliente().getNome()+" aceito todas as    condições propostas "
+		listText.add("Eu " + conta.getCliente().getNome() + " aceito todas as    condições propostas "
 				+ "neste contrato estipulado na presente data.");
-		listText.add("Todos os nossos seguros garantem recuperação de 100% do valor investido pelo    "
-				+ "segurado.");
+		listText.add("Todos os nossos seguros garantem recuperação de 100% do valor investido pelo    " + "segurado.");
+		listText.add("     --------  ACIONAR SEGURO   --------");
+		listText.add("Valor do seguro: " + Utils.convertToReais(apolice.getSeguro().getValor()));
+		listText.add("Taxa anual do seguro: " + Utils.convertToReais(apolice.getSeguro().getTaxa()));
+		listText.add("Vigencia da solicitação apartir de " + apolice.getDataCarencia());
+		listText.add("Valor que será debitado no ato da contratação com base em " + apolice.getAnos()
+				+ " anos de contrato: " + Utils.convertToReais((apolice.getAnos() * apolice.getSeguro().getTaxa())));
+
 		listText.add("Cesário Lange 30 de Fevereiro de 1850          Empresa Fulano de tal LTDA");
 		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
-	
+
 	public static void exibeDetalhesApolice(Apolice apolice) {
 		listText.clear();
 		listText.add("       --- DETALHES DA APÓLICE --- ");
-		listText.add("-Data da Contratação: "+apolice.getDataAssinatura());
-		listText.add("-Tipo de Seguro: "+apolice.getSeguro().getNome());
-		listText.add("-Valor anual apólice: "+apolice.getSeguro().getValorApolice());
+		listText.add("-Data da Contratação: " + apolice.getDataAssinatura());
+		listText.add("-Tipo de Seguro: " + apolice.getSeguro().getNome());
+		listText.add("-Carencia do seguro: " + apolice.getDataCarencia());
+		listText.add("-Taxa anual apólice: " + Utils.convertToReais(apolice.getSeguro().getTaxa()));
+		listText.add("-Validade do contrato: " + apolice.getDataValidade());
+		listText.add("-Valor total apólice: " + Utils.convertToReais(apolice.getAnos() * apolice.getSeguro().getTaxa()));
 		listText.add("");
 		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
-	public static void exibeMenuOpcoesConfirmacao(String positivo, String negativo,String titulo) {
+
+	public static void exibeMenuOpcoesConfirmacao(String positivo, String negativo, String titulo,String subtitulo) {
 		listText.clear();
-		listText.add("       --- "+titulo+" --- ");
-		listText.add("       " + positivo + "             " + negativo);
+		listText.add("       --- " + titulo + " --- ");
+		if(!subtitulo.isEmpty())listText.add(subtitulo);
+		listText.add("       " + positivo + " " + negativo);
 		listText.add("");
 		UtilFormatConsole.writeConsole(listText, listText.size());
 	}

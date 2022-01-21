@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -27,7 +28,7 @@ public class UtilFormatConsole {
 		System.out.println("╚══════════════════════════════════════════╝");
 	}
 
-	public static void writeConsole(String[] texto, int qtd) {
+	public static void writeConsoleArray(String[] texto, int qtd) {
 		System.out.println("╔══════════════════════════════════════════╗");
 		for (int x = 0; x < qtd; x++) {
 			System.out.print("║ ");
@@ -37,7 +38,7 @@ public class UtilFormatConsole {
 
 	}
 
-	public static void writeConsole(ArrayList<String> listText, int size) {
+	public static void writeConsole(List<String> listText, int size) {
 		System.out.println("╔══════════════════════════════════════════╗");
 		for (int x = 0; x < size; x++) {
 			System.out.print("║ ");

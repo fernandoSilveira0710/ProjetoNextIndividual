@@ -27,12 +27,17 @@ public class Const {
 			  "(iv) O valor do seguro individual é de R$16,00 ao ano"};
 	
 	// VALORES APOLICE
-	public static final double VALOR_SEGURO_ANUAL_MORTE = 36.0;
-	public static final double VALOR_SEGURO_ANUAL_INVALIDEZ = 26.0;
-	public static final double VALOR_SEGURO_ANUAL_DESEMPREGO = 16.0;
+	public static final double VALOR_SEGURO_ANUAL_MORTE = 25000.0;
+	public static final double VALOR_SEGURO_ANUAL_INVALIDEZ = 20000.0;
+	public static final double VALOR_SEGURO_ANUAL_DESEMPREGO = 10000.0;
 
 	//DATA DE CARENCIA DA APOLICE DO SEGURO
 	public static final int DIAS_DE_CARENCIA_APOLICE = 15;
+	
+	//TAXA SEGUROS
+	public static final double TAXA_SEGURO_MORTE = 36.0;
+	public static final double TAXA_SEGURO_INVALIDEZ = 26.0;
+	public static final double TAXA_SEGURO_DESEMPREGO = 16.0;
 	
 	//IDS CLASSES
 	public static int CONTAS_CRIADAS = 1;

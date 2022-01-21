@@ -51,7 +51,7 @@ public class ContaBO {
 				System.out.println("Taxando: " + Utils.convertToReais(taxa));
 				cc.setSaldo(valor);
 				cc.setData(Utils.getDateAdd1Month());
-				System.out.println("Pr�ximo m�s de cobran�a: " + cc.getData());
+				System.out.println("Proximo mes de cobrança: " + cc.getData());
 			}
 		} else if (cp != null) {
 			if (cp.getData().equals(Utils.dataAtual())) {
@@ -61,7 +61,7 @@ public class ContaBO {
 				System.out.println("Rendendo: " + Utils.convertToReais(taxa));
 				cp.setSaldo(valor);
 				cp.setData(Utils.getDateAdd1Month());
-				System.out.println("Pr�ximo m�s de cobran�a: " + cp.getData());
+				System.out.println("Proximo mes de cobrança: " + cp.getData());
 
 			}
 		}
@@ -78,28 +78,28 @@ public class ContaBO {
 	}
 
 	// RETORNA UMA STRING COM DETAALHES DA CONTA
-	public static String exibeDetalhesConta() {
+	public static List<String> exibeDetalhesConta() {
 		int tipo = 0;
-		String retorno = "";
+		List<String> retorno = new ArrayList<String>();
 		int cont = 0;
 		for (Conta conta : listConta) {
 			if (cont == 0) {
-				retorno += "\n\n>>Bem vindo " + conta.getCliente().getNome() + "    >>Tipo conta: "
-						+ conta.getCliente().getTipo().name();
+				retorno.add("        Bem vindo " + conta.getCliente().getNome());
+				retorno.add(" >>Tipo conta: " + conta.getCliente().getTipo().name());
 				cont++;
 			}
 			if (conta.getTipoConta() == TipoConta.ContaCorrente) {
 				id = 1;
 				tipo++;
 				cc = conta; // SETA CONTA EM CONTA CORRENTE
-				retorno += "\n>>Numero corrente: " + conta.getNumero() + "    >>Saldo:"
-						+ utils.convertToReais(consultarSaldo(conta));
+				retorno.add(" >>Numero corrente: " + conta.getNumero());
+				retorno.add(" >>Saldo:"+utils.convertToReais(consultarSaldo(conta)));
 			}
 			if (conta.getTipoConta() == TipoConta.ContaPoupanca) {
 				id = 2;
 				cp = conta; // SETA CONTA EM CONTA POUPANCA
-				retorno += "\n>>Numero poupan�a: " + conta.getNumero() + "    >>Saldo:"
-						+ utils.convertToReais(consultarSaldo(conta));
+				retorno.add(" >>Numero poupanca: " + conta.getNumero());
+				retorno.add(" >>Saldo:"+ utils.convertToReais(consultarSaldo(conta)));
 				tipo++;
 			}
 			if (conta.getTipoConta() == TipoConta.ContaCorrente && conta.getTipoConta() == TipoConta.ContaPoupanca) {
@@ -256,6 +256,11 @@ public class ContaBO {
 			return false;
 	}
 
+	// SACA DA CONTA RECBIDA
+	public static boolean saqueDeUmaDasContas(double valor) {
+		return Banco.saqueQualquerConta(valor);
+	}
+
 	// TRANSFERE DE CONTA X PARA CONTA Y
 	public static boolean transferir(Conta contaDestino, double valTransferencia, Conta c) {
 		if (c.getSaldo() >= valTransferencia) {
@@ -335,6 +340,16 @@ public class ContaBO {
 			System.out.println("\n    >>Limite aprovado de " + Utils.convertToReais(limite) + "<<    ");
 			return limite;
 
+		}
+	}
+
+	public static boolean depositaEmUmaDasContas(double valor) {
+		Conta c = Banco.depositaEmUmaDasContas(valor);
+		if(c != null) {
+			verificaTipoConta(c);
+			return true;
+		}else {
+			return false;
 		}
 	}
 

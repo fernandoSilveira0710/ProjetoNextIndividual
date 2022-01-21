@@ -6,7 +6,7 @@ public class Seguro {
 	private int id;
 	private String regras[];
 	private double valor;
-
+	private double taxa;
 	private TipoSeguro tipoSeguro;
 	private String nome;
 
@@ -15,7 +15,12 @@ public class Seguro {
 		this.nome = tipoSeguro.name();
 		this.id = newId();
 		this.valor = buscaValorApolice(tipoSeguro);
+		this.taxa = buscaTaxaApolice(tipoSeguro);
 		this.regras = buscaRegra(tipoSeguro);
+	}
+
+	private double buscaTaxaApolice(TipoSeguro tipoSeguro) {
+		return tipoSeguro.getTaxa();
 	}
 
 	private double buscaValorApolice(TipoSeguro tipoSeguro) {
@@ -53,12 +58,24 @@ public class Seguro {
 	public void setTipoSeguro(TipoSeguro tipoSeguro) {
 		this.tipoSeguro = tipoSeguro;
 	}
-	public double getValorApolice() {
+	public double getValor() {
 		return valor;
 	}
 
-	public void setValorApolice(double valorApolice) {
-		this.valor = valorApolice;
+	public void setValor(double valor) {
+		this.valor = valor;
 	}
+
+	public double getTaxa() {
+		
+		return taxa;
+	}
+
+	public void setTaxa(double taxa) {
+		this.taxa = taxa;
+	}
+	
+	
+	
 
 }

@@ -1,5 +1,8 @@
 package br.projetoparticularnext.com.bean.cartao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.projetoparticularnext.com.utils.Const;
 
 public class Cartao {
@@ -8,6 +11,7 @@ public class Cartao {
 	private String bandeira;
 	private String senha;
 	private boolean isAtivo;
+	private List<Compra> compras;
 
 	public Cartao(String numero, String bandeira, String senha, boolean isAtivo) {
 		this.id = novoId();
@@ -15,6 +19,7 @@ public class Cartao {
 		this.bandeira = bandeira;
 		this.senha = senha;
 		this.isAtivo = isAtivo;
+		this.compras = new ArrayList<Compra>();
 	}
 
 	public int getId() {
@@ -68,6 +73,14 @@ public class Cartao {
 	// gera contas
 	private int novoId() {
 		return Const.CARTOES_CRIADOS++;
+	}
+
+	public List<Compra> getCompras() {
+		return compras;
+	}
+
+	public void setCompras(List<Compra> compras) {
+		this.compras = compras;
 	}
 
 }

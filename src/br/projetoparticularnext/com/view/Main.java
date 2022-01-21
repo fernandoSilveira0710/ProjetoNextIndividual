@@ -1,11 +1,11 @@
 package br.projetoparticularnext.com.view;
+import java.util.Date;
+import java.util.List;
 
 import br.projetoparticularnext.com.bean.Endereco;
 import br.projetoparticularnext.com.bean.cartao.Apolice;
 import br.projetoparticularnext.com.bean.cartao.CartaoCredito;
 import br.projetoparticularnext.com.bean.cartao.CartaoDebito;
-import br.projetoparticularnext.com.bean.cartao.TipoSeguro;
-import br.projetoparticularnext.com.bean.conta.Conta;
 import br.projetoparticularnext.com.bean.conta.TipoConta;
 import br.projetoparticularnext.com.bo.ApoliceBO;
 import br.projetoparticularnext.com.bo.CartaoBO;
@@ -50,37 +50,28 @@ public class Main {
 			}
 
 		}
-		System.out.println("|_________________________________|");
 		cadastrar();
 	}
 
 // CADASTRA O USUARIO
 	private static void cadastrar() {
-		System.out.println(" _________________________________ ");
-		System.out.println("|----  CADASTRO DADOS BASICOS  ---|");
+		UtilFormatConsole.writeConsole("    ----- CADASTRO DADOS BASICOS -----");
 		System.out.println("|Seu CPF: " + cpfConsole);
 		String rg = utils.lerConsole("|Digite seu RG: ");
 		String nome = utils.lerConsole("|Digite seu nome completo: ");
 		String email = utils.lerConsole("|Digite seu email: ");
-		senha = utils.lerConsole("Digite sua senha: ");
-		System.out.println(" __________________________________ ");
-		System.out.println("|-------  CADASTRO ENDERE�O  ------|");
+		senha = utils.lerConsole("|Digite sua senha: ");
+		UtilFormatConsole.writeConsole("    ----- CADASTRO DO ENDEREÇO -----");
 		String rua = utils.lerConsole("|Digite sua rua: ");
 		String bairro = utils.lerConsole("|Digite seu bairro: ");
 		String numero = utils.lerConsole("|Digite seu numero: ");
 		String cidade = utils.lerConsole("|Digite sua cidade: ");
 		String estado = utils.lerConsole("|Digite seu estado: ");
 		String cep = utils.lerConsole("|Digite seu cep: ");
-		System.out.println("|_________________________________|");
-
-		System.out.println(" __________________________________ ");
-		System.out.println("|-------  DEFINIR TIPO CONTA  -----|");
-		System.out.println("|1- Conta Corrente                |\n" + "|2- Conta Poupança                 |\n"
-				+ "|3- Ambos(Corrente e Poupança)     |");
+		Menus.exibeMenuOpcoesConfirmacao("1 - POUPANÇA", "2 - CORRENTE", "ESCOLHA A CONTA", "               3 - AMBAS");
 		String tipoConta = utils.lerConsole("|Digite a opção:");
 
-		System.out.println("|_________________________________|");
-
+		
 		// FALTA VALIDAR CAMPOS ANTES DE ENVIAR
 		// CADASTRA ENDERECO,CLIENTE E CONTA
 		EnderecoBO enderecoBO = new EnderecoBO(cidade, estado, bairro, numero, rua, cep);
@@ -115,7 +106,8 @@ public class Main {
 
 		boolean loop = true;
 		while (loop) {
-			System.out.println(ContaBO.exibeDetalhesConta());// BUSCA DETALHES CONTA
+			List<String> listDetalhes = ContaBO.exibeDetalhesConta();// BUSCA DETALHES CONTA
+			UtilFormatConsole.writeConsole(listDetalhes, listDetalhes.size());
 			Menus.exibeOpcoesConta();// EXIBE DETALHES CONTA E MENU PRINCIPAL
 			String operacao = utils.lerConsole("|Digite sua operação: ");
 
@@ -259,41 +251,69 @@ public class Main {
 	}
 
 	private static void buscaOperacoesDeSeguro() {
-		Apolice apolice = ApoliceBO.buscaApolice();//VERIFICA SE EXISTE APOLICE NO CARTAO DO USUARIO
-		if(apolice != null) {
+		Apolice apolice = ApoliceBO.buscaApolice();// VERIFICA SE EXISTE APOLICE NO CARTAO DO USUARIO
+		if (apolice != null) {
 			Menus.exibeOpcoesApolice(true);
-		}
-		else {
+		} else {
 			Menus.exibeOpcoesApolice(false);
 		}
-		
-		String op = utils.lerConsole("DIGITE A OPERAÇÃO: ");
-		if (op.equals("*")) {//CONTRATAÇÃO APOLICE SEGURO
+
+		String op = utils.lerConsole("|Digite a operação: ");
+		if (op.equals("*")) {// CONTRATAÇÃO APOLICE SEGURO
 			Menus.exibeMenuOpcoesSeguro();
 			String opcaoTipoSeguro = UtilFormatConsole.readConsole();
-			apolice = ApoliceBO.CriaApoliceProvisoria(opcaoTipoSeguro);
+			String anos = "/";// para forçar a entrada no while
+			while (!anos.matches("[0-9]*")) {
+				anos = utils.lerConsole("|Digite quantos anos de contrato: ");
+			}
+			apolice = ApoliceBO.CriaApoliceProvisoria(opcaoTipoSeguro, Integer.parseInt(anos));
 			Menus.exibeApolice(apolice, ContaBO.retornaContaPrincipal());
-			Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃO","CONFIRMA AS CONDIÇOES?");
-
+			double valorTaxaAnos = (apolice.getAnos() * apolice.getSeguro().getTaxa());
+			Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃO", "CONFIRMA AS CONDIÇOES?", ">>" + apolice.getAnos()
+					+ " anos de Contrato " + ">>valor total que será debitado: " + Utils.convertToReais(valorTaxaAnos));
 			if (UtilFormatConsole.readConsole().equals("1")) {
-				utils.loading("\n\n        Contratando seguro");
-				System.out.println(ApoliceBO.CriaApolice(apolice) ? "\n      >>Apólice do seguro criada com sucesso!<<"
-						: "\n      Houve um erro na contratação<<");
-			}else {
+				if (ContaBO.saqueDeUmaDasContas(valorTaxaAnos)) {
+					utils.loading("\n\n        Contratando seguro");
+					System.out.println(ApoliceBO.CriaApolice(apolice) ? "\n      >>Apólice do seguro criada com sucesso!<<\n\n"
+							: "\n      Houve um erro na contratação<<");
+				} else {
+					System.err.println(">>Você não possui saldo para pagamento de taxa da apólice<<");
+				}
+			} else {
 				System.out.println("\n     >>Aquisição do seguro cancelada pelo usuário!<<");
 			}
-		} else if (op.equals("1")) { //VISUALIZAR SEGURO
+
+		} else if (op.equals("1")) { // VISUALIZAR SEGURO
 			Menus.exibeApolice(apolice, ContaBO.retornaContaPrincipal());
 		} else if (op.equals("2")) { // CANCELAR SEGURO
 			Menus.exibeDetalhesApolice(apolice);
-			Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃO","CANCELAR APÓLICE?");
+			Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "       2 - NÃO", "CANCELAR APÓLICE?", "");
 			if (UtilFormatConsole.readConsole().equals("1")) {
 				utils.loading("\n\n        Cancelando seguro");
 				ApoliceBO.deletaApolice();
 				System.out.println("      >>Cancelamento de seguro efetuado com sucesso!<<");
-			}else {
+			} else {
 				System.out.println("      >>Não foi possivel o cancelamento do seguro!<<");
 			}
+		} else if (op.equals("3")) { // ACIONAR SEGURO
+			// verificar se carencia já passou
+			// depositar valor na conta
+			// add nova carencia
+			
+			// new Date().after(utils.readConsoleData(apolice.getDataCarencia())
+			//SETAR DATA SENÃO NUNCA ENTRA AQUI
+			Menus.exibeDetalhesApolice(apolice);
+			if(new Date().after(utils.readConsoleData(apolice.getDataCarencia()))) {
+				utils.loading("\n\n        Acionando seguro");
+				if(ContaBO.depositaEmUmaDasContas(apolice.getSeguro().getValor())) {
+					apolice.setDataCarencia(90);
+					Menus.exibeDetalhesApolice(apolice);
+					System.out.println("       >>Seguro acionado com sucesso!<<\n "
+									 + "       >>valor já se encontra disponivel<< \n"
+									 + "       >>Carencia de 90 dias incluida na apólice<<");
+				}else System.err.println(">> Não foi possivel acionar o seguro!");
+			}else System.err.println(">> Não foi possivel acionar pois a data atual está dentro da carencia estipulada!\n");
+			
 		}
 	}
 
