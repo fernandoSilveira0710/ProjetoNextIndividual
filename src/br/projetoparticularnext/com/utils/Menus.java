@@ -40,7 +40,7 @@ public class Menus {
 	// EXIBE SAIR PARA OUTRO MENU
 	public static boolean exibeOpcaoConta(String titulo) {
 		if (ContaBO.id == 3) {
-			String[] textos = new String[4];
+			String[] textos = new String[3];
 			textos[0] = "  ";
 			textos[1] = " ----------  " + titulo + "   ----------";
 			textos[2] = "      0 - CORRENTE | 1 - POUPANCA       ";
@@ -124,8 +124,9 @@ public class Menus {
 		listText.clear();
 		UtilFormatConsole.writeConsole(" --------  ESCOLHA A BANDEIRA  --------");
 		listText.add("");
-		listText.add(" 1 - VISA    2 - MASTERCARD    ");
-		listText.add(" 3 - ELO     0 - CANCELAR");
+		listText.add(" 1 - VISA");
+		listText.add(" 2 - MASTERCARD");
+		listText.add(" 3 - ELO");
 		listText.add("");
 		UtilFormatConsole.writeConsole(listText, listText.size());
 	}
@@ -184,8 +185,7 @@ public class Menus {
 	}
 
 	public static void exibeMenuCompra() {
-		System.out.println(" _________________________");
-		System.out.println("|------ NOVA COMPRA ------|");
+		UtilFormatConsole.writeConsole("     -------  NOVA COMPRA  -------");
 	}
 
 	public static void exibeOpcoesApolice(boolean cadastrado) {

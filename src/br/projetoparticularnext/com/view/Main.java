@@ -1,4 +1,6 @@
 package br.projetoparticularnext.com.view;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class Main {
 	static String cpfConsole = "";
 	static String senha = "";
 	static boolean logado = false; // FLAG
+	static int tentativas = 0;// FLAG PARA VERIFICA QUANTIDADE DE ERROS
 
 	public static void main(String[] args) {
 		// Utils.returnDataDiaDefinido("20");
@@ -39,7 +42,12 @@ public class Main {
 		UtilFormatConsole.writeConsole("    ------------  LOGIN  ------------");
 
 		while (true) {
-			cpfConsole = utils.lerConsole("|Digite seu CPF:");
+			try {
+				cpfConsole = utils.lerConsole("|Digite seu CPF:");
+			} catch (NumberFormatException e) {
+				System.err.println("Digite Apenas números");
+			}
+
 			if (ContaBO.validarCpf(cpfConsole)) {
 				if (ContaBO.testaLogin(cpfConsole)) {// Verifica se cpf existe no banco
 					senha = utils.lerConsole("|Digite sua senha: ");
@@ -71,12 +79,11 @@ public class Main {
 		Menus.exibeMenuOpcoesConfirmacao("1 - POUPANÇA", "2 - CORRENTE", "ESCOLHA A CONTA", "               3 - AMBAS");
 		String tipoConta = utils.lerConsole("|Digite a opção:");
 
-		
 		// FALTA VALIDAR CAMPOS ANTES DE ENVIAR
 		// CADASTRA ENDERECO,CLIENTE E CONTA
 		EnderecoBO enderecoBO = new EnderecoBO(cidade, estado, bairro, numero, rua, cep);
 		identificaECadastraContas(tipoConta, senha, email, cpfConsole, rg, nome, enderecoBO.endereco);
-		Utils.loading("\n\nSalvando cliente e cadastrando conta"); // EXIBE LOADING NA TELA
+		utils.loading("\n\nSalvando cliente e cadastrando conta"); // EXIBE LOADING NA TELA
 		System.out.println("\n\n>>Cliente e conta cadastrados com sucesso!<<\n\n");
 		ContaBO.buscaContaCadastrada(true, cpfConsole, senha);// RECUPERA LISTA DE CONTAS DESTE CPF
 		menuPrincipal();
@@ -113,83 +120,33 @@ public class Main {
 
 			switch (operacao) {
 			case "1": { // transferencia
-				while (true) {
-					String numDestino = utils.lerConsole("Digite o numero da conta destino: ");
-					double valorDeTransferencia = Double
-							.parseDouble(utils.lerConsole("Digite o valor que deseja transferir: "));
-					String[] resposta = ContaBO.buscaContaeTransfere(numDestino, valorDeTransferencia,
-							Menus.exibeOpcaoConta("Qual conta?"));
-					Utils.loading("\nTransferindo"); // EXIBE LOADING NA TELA
-					System.out.println(resposta[0]);// Exibe resposta do control
-					if (resposta[1].equals("0")) {
-						menuPrincipal();
-						break;
-					}
-				}
+				UtilFormatConsole.writeConsole(" ------------ TRANSFERENCIA  -----------");
+				transferencia();
 				break;
 			}
 			case "2": { // deposito
 				// solicita valor, envia pro metodo saque que retorna a mensagem
-				while (true) {
-					if (ContaBO.depositaNaConta(Menus.exibeOpcaoConta("Qual conta?"))) {
-						Utils.loading("\n\nDepositando"); // EXIBE LOADING NA TELA
-						System.out.println("\n\n>>Deposito realizado com sucesso!<< \n\n");
-						menuPrincipal();
-						break;
-					} else {
-						Utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
-						System.err.println("\n>>Erro no depósito!<< \n");
-					}
-				}
+				UtilFormatConsole.writeConsole("    ------------  DEPÓSITO  ------------");
+				deposito();
 				break;
 			}
 			case "3": { // saldo
+				UtilFormatConsole.writeConsole("    ------------  SALDO  ------------");
 				System.out.println(ContaBO.consultaSaldo(Menus.exibeOpcaoConta("Qual conta?")));
 				break;
 			}
 			case "4": { // saque
+				UtilFormatConsole.writeConsole("    ------------  SAQUE  ------------");
 				// solicita valor, envia pro metodo saque que retorna a mensagem
-				while (true) {
-					if (ContaBO.saqueConta(Menus.exibeOpcaoConta("Qual conta"))) {
-						Utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
-						System.out.println("\n\n>>Saque realizado com sucesso!<<");
-						menuPrincipal();
-						break;
-					} else {
-						Utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
-						System.err.println("\n>>Saldo Insuficiente<<\n");
-					}
-				}
+				saque();
 				break;
 			}
 			case "5": { // area crédito
-				boolean cadastrado = false;
-				boolean cartaoAtivado = false;
-				CartaoCredito credito = CartaoBO.recuperaCartaoCredito();
-				if (credito != null) {
-					cartaoAtivado = credito.isAtivo();
-					cadastrado = true;
-					Menus.dadosCartoes(credito.getNumero(), String.valueOf(credito.getDataVencimento()),
-							credito.getValorFatura(), credito.getLimite(), "disponivel", cartaoAtivado);
-				}
-				Menus.exibeOpcoesCartaoCredito(cadastrado, cartaoAtivado);
-				String op = utils.lerConsole("|Digite a operação: ");
-				buscaOperacaoCredito(op, cadastrado, cartaoAtivado, credito);
+				buscaEExibeOpcoesCartaoCredito();
 				break;
 			}
 			case "6": { // area debitos
-				boolean cadastrado = false;
-				boolean cartaoAtivado = false;
-				CartaoDebito debito = CartaoBO.recuperaCartaoDebito();
-				if (debito != null) {
-					cadastrado = true;
-					cartaoAtivado = debito.isAtivo();
-					Menus.dadosCartoes(debito.getNumero(), "", debito.getLimitePorTransacao(),
-							debito.getLimitePorTransacao(), "P/Transacao", cartaoAtivado);
-				}
-				Menus.exibeOpcoesCartaoDebito(cadastrado, cartaoAtivado);
-				String op = utils.lerConsole("|Digite a operação: ");
-				buscaOperacaoDebito(op, cadastrado, cartaoAtivado, debito);
+				buscaEExibeOpcoesDebito();
 				break;
 			}
 			case "7": { // area pix
@@ -199,12 +156,8 @@ public class Main {
 				break;
 			}
 			case "0": { // sair
-				Utils.loading("\n\nSaindo"); // EXIBE LOADING NA TELA
-				System.out.println("\n\n|        Logoff Concluido!        |\n\n"
-						+ "====================================================================================");
-				ContaBO.zerarAlocacoesDeMemoria(); // zera os cadastros setados em mem�ria
-				Banco.zerarTodasAsInstanciasBanco();
-				loop = false;
+				utils.loading("\n\nSaindo"); // EXIBE LOADING NA TELA
+				loop = logout();
 				break;
 			}
 			default:
@@ -214,9 +167,134 @@ public class Main {
 		menuInicio();
 	}
 
+	// REALIZA O LOGOUT DA CONTA
+	public static boolean logout() {
+		boolean loop;
+		System.out.println("\n\n|        Logoff Concluido!        |\n\n"
+				+ "====================================================================================");
+		ContaBO.zerarAlocacoesDeMemoria(); // zera os cadastros setados em mem�ria
+		Banco.zerarTodasAsInstanciasBanco();
+		loop = false;
+		return loop;
+	}
+
+	// BUSCA CARTAO CADASTRADO E EXIBE O MENU E OPÇÕES DE DEBITO
+	public static void buscaEExibeOpcoesDebito() {
+		boolean cadastrado = false;
+		boolean cartaoAtivado = false;
+		CartaoDebito debito = CartaoBO.recuperaCartaoDebito();
+		if (debito != null) {
+			cadastrado = true;
+			cartaoAtivado = debito.isAtivo();
+			Menus.dadosCartoes(debito.getNumero(), "", debito.getLimitePorTransacao(), debito.getLimitePorTransacao(),
+					"P/Transacao", cartaoAtivado);
+		}
+		Menus.exibeOpcoesCartaoDebito(cadastrado, cartaoAtivado);
+		String op = utils.lerConsole("|Digite a operação: ");
+		buscaOperacaoDebito(op, cadastrado, cartaoAtivado, debito);
+	}
+
+	// BUSCA CARTAO CADASTRADO E EXIBE O MENU E OPÇÕES DE CREDITO
+	public static void buscaEExibeOpcoesCartaoCredito() {
+		boolean cadastrado = false;
+		boolean cartaoAtivado = false;
+		CartaoCredito credito = CartaoBO.recuperaCartaoCredito();
+		if (credito != null) {
+			cartaoAtivado = credito.isAtivo();
+			cadastrado = true;
+			Menus.dadosCartoes(credito.getNumero(), String.valueOf(credito.getDataVencimento()),
+					credito.getValorFatura(), credito.getLimite(), "disponivel", cartaoAtivado);
+		}
+		Menus.exibeOpcoesCartaoCredito(cadastrado, cartaoAtivado);
+		String op = utils.lerConsole("|Digite a operação: ");
+		buscaOperacaoCredito(op, cadastrado, cartaoAtivado, credito);
+	}
+
+//REALIZA SAQUE 
+	public static void saque() {
+		tentativas = 0;
+		while (true) {
+			if ((tentativas % 2) == 0 && tentativas > 0) {
+				Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃO", "SAIR DA OPERAÇÃO?","");
+				if (UtilFormatConsole.readConsole().equals("1")) {
+					System.out.println("      >>Operação cancelada pelo usuario!");
+					break;
+				}
+			} 
+			if (ContaBO.saqueConta(Menus.exibeOpcaoConta("Qual conta"))) {
+				utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
+				System.out.println("\n\n>>Saque realizado com sucesso!<<");
+				menuPrincipal();
+				break;
+			} else {
+				utils.loading("\n\nSacando"); // EXIBE LOADING NA TELA
+				System.err.println("\n>>Saldo Insuficiente<<\n");
+			}
+			tentativas ++;
+		}
+	}
+
+//REALIZA DEPOSITO
+	public static void deposito() {
+		tentativas = 0;
+		
+		while (true) {
+			if ((tentativas % 2) == 0 && tentativas >0) {
+				Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃO", "SAIR DA OPERAÇÃO?","");
+				if (UtilFormatConsole.readConsole().equals("1")) {
+					System.out.println("      >>Operação cancelada pelo usuario!");
+					break;
+				}
+			} 
+			if (ContaBO.depositaNaConta(Menus.exibeOpcaoConta("Qual conta?"))) {
+				utils.loading("\n\nDepositando"); // EXIBE LOADING NA TELA
+				System.out.println("\n\n>>Deposito realizado com sucesso!<< \n\n");
+				menuPrincipal();
+				break;
+			} else {
+				utils.loading("\n\nDepositando"); // EXIBE LOADING NA TELA
+				System.err.println("\n>>Erro no depósito!<< \n");
+			}
+			tentativas ++;
+		}
+	}
+
+// REALIZA TRANFERENCIA ENTRE CONTAS
+	public static void transferencia() {
+		tentativas = 0;
+		while (true) {
+
+			if ((tentativas % 2) == 0 && tentativas >0) {
+				Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "2 - NÃO", "SAIR DA OPERAÇÃO?","");
+				if (UtilFormatConsole.readConsole().equals("1")) {
+					break;
+				}
+			} else {
+				String numDestino = utils.lerConsole("Digite o numero da conta destino: ");
+				double valorDeTransferencia = 0.0;
+				try {
+					valorDeTransferencia = Double
+							.parseDouble(utils.lerConsole("Digite o valor que deseja transferir: "));
+					String[] resposta = ContaBO.buscaContaeTransfere(numDestino, valorDeTransferencia,
+							Menus.exibeOpcaoConta("Qual conta?"));
+					utils.loading("\nTransferindo"); // EXIBE LOADING NA TELA
+					System.out.println("\n"+resposta[0]);
+					if (resposta[1].equals("0")) {
+						menuPrincipal();
+						break;
+					}
+				} catch (NumberFormatException e) {
+					System.err.println("     >>Digite apenas números!<<");
+				}
+			}
+			tentativas++;
+		}
+	}
+
 	// BUSCA OPERACOES E EXECUTA OPERACOES DO MENU CREDITO
 	private static void buscaOperacaoCredito(String op, boolean cadastrado, boolean ativado, CartaoCredito credito) {
-		if (op.equals("*")) {
+		tentativas = 0;
+		if (op.equals("*")) {//CADASTRA CREDITO
 			String numBandeira = retornaBandeira();
 			if (!numBandeira.equals("") || !numBandeira.equals("0") && cadastrado) {
 				String senha = retornaSenha();// solicita senha e retorna
@@ -238,11 +316,19 @@ public class Main {
 			String dataVencimento = escolherDataVencimento();
 			System.out.println(
 					CartaoBO.alteraDataVencimento(dataVencimento) ? "\n          >>Data alterada com sucesso!<<\n"
-							: "        >>Houve um erro na alteração da Data!<<");
+							: "\n        >>Houve um erro na alteração da Data!<<");
 		} else if (op.equals("4") && cadastrado) {// PAGAMENTO DE FATURA
 			System.out.println("\n>>Fatura atual:" + utils.convertToReais(credito.getValorFatura()));
-			double valorPagamento = Double.parseDouble(utils.lerConsole("Digite o valor que deseja pagar: "));
-			System.out.println(CartaoBO.debitarFaturaCredito(valorPagamento));
+			while(true) {
+				try {
+					double valorPagamento = Double.parseDouble(utils.lerConsole("Digite o valor que deseja pagar: "));
+					System.out.println("\n"+CartaoBO.debitarFaturaCredito(valorPagamento));
+					
+					break;
+				}catch(NumberFormatException e) {
+					System.err.println("\n   >>Valor precisa ser no formato 0.00");
+				}
+			}
 		} else if (op.equals("5") && cadastrado) {// BLOQUEIA CARTON
 			exibeAtivacao(ativado, 2);// 1 = debito 2= credito
 		} else if (op.equals("6") && cadastrado) {// APOLICE DO SEGURO
@@ -257,7 +343,6 @@ public class Main {
 		} else {
 			Menus.exibeOpcoesApolice(false);
 		}
-
 		String op = utils.lerConsole("|Digite a operação: ");
 		if (op.equals("*")) {// CONTRATAÇÃO APOLICE SEGURO
 			Menus.exibeMenuOpcoesSeguro();
@@ -274,8 +359,9 @@ public class Main {
 			if (UtilFormatConsole.readConsole().equals("1")) {
 				if (ContaBO.saqueDeUmaDasContas(valorTaxaAnos)) {
 					utils.loading("\n\n        Contratando seguro");
-					System.out.println(ApoliceBO.CriaApolice(apolice) ? "\n      >>Apólice do seguro criada com sucesso!<<\n\n"
-							: "\n      Houve um erro na contratação<<");
+					System.out.println(
+							ApoliceBO.CriaApolice(apolice) ? "\n      >>Apólice do seguro criada com sucesso!<<\n\n"
+									: "\n      Houve um erro na contratação<<");
 				} else {
 					System.err.println(">>Você não possui saldo para pagamento de taxa da apólice<<");
 				}
@@ -299,39 +385,61 @@ public class Main {
 			// verificar se carencia já passou
 			// depositar valor na conta
 			// add nova carencia
-			
+
 			// new Date().after(utils.readConsoleData(apolice.getDataCarencia())
-			//SETAR DATA SENÃO NUNCA ENTRA AQUI
+			// SETAR DATA SENÃO NUNCA ENTRA AQUI
 			Menus.exibeDetalhesApolice(apolice);
-			if(new Date().after(utils.readConsoleData(apolice.getDataCarencia()))) {
+			if (new Date().after(utils.readConsoleData(apolice.getDataCarencia()))) {
 				utils.loading("\n\n        Acionando seguro");
-				if(ContaBO.depositaEmUmaDasContas(apolice.getSeguro().getValor())) {
+				if (ContaBO.depositaEmUmaDasContas(apolice.getSeguro().getValor())) {
 					apolice.setDataCarencia(90);
 					Menus.exibeDetalhesApolice(apolice);
 					System.out.println("       >>Seguro acionado com sucesso!<<\n "
-									 + "       >>valor já se encontra disponivel<< \n"
-									 + "       >>Carencia de 90 dias incluida na apólice<<");
-				}else System.err.println(">> Não foi possivel acionar o seguro!");
-			}else System.err.println(">> Não foi possivel acionar pois a data atual está dentro da carencia estipulada!\n");
-			
+							+ "       >>valor já se encontra disponivel<< \n"
+							+ "       >>Carencia de 90 dias incluida na apólice<<");
+				} else
+					System.err.println(">>Não foi possivel acionar o seguro!<<");
+			} else
+				System.err
+						.println(">> Não foi possivel acionar pois a data atual está dentro da carencia estipulada!\n");
+
 		}
 	}
 
 	public static void comprarComCartao(int op) {
 		Menus.exibeMenuCompra();
-		String descricao = utils.lerConsole("Nome do Produto: ");
-		double valor = Double.parseDouble(utils.lerConsole("Digite o valor do produto: "));
-		String senha = utils.lerConsole("Digite a senha: ");
-		if (op == 1) {
-			System.out.println(CartaoBO.cadastraCompraCredito(descricao, valor, senha));
-		} else {
-			System.out.println(CartaoBO.cadastraCompraDebito(descricao, valor, senha));
+		tentativas = 0;
+		while(true) {
+			if(tentativas > 0) {
+				Menus.exibeMenuOpcoesConfirmacao("1 - SIM", "       2 - NÃO", "NOVA COMPRA?", "");
+				if (UtilFormatConsole.readConsole().equals("2")) {
+					break;
+				}
+			}
+			try {
+				String descricao = utils.lerConsole("|Nome do Produto: ");
+				double valor = Double.parseDouble(utils.lerConsole("|Digite o valor do produto: "));
+				String senha = utils.lerConsole("|Digite a senha: ");
+				if(!descricao.equals("") && valor > 0.0 && !senha.equals("")) {
+					if (op == 1) {
+						System.out.println(CartaoBO.cadastraCompraCredito(descricao, valor, senha));
+					} else {
+						System.out.println(CartaoBO.cadastraCompraDebito(descricao, valor, senha));
+					}
+				}else {
+					System.err.println("   >>Todos os campos precisam estar preenchidos<<");
+				}
+				
+			}catch(NumberFormatException e) {
+				System.err.println("   >>Valor do produto precisa ser apenas numeros (ex: 2.99)");
+			}
+			tentativas++;
 		}
 	}
 
-	// BUSCA OPERA��ES E EXECUTA OPERA��ES DO MENU CR�DITO
+	// BUSCA OPERAÇÕES E EXECUTA OPERAÇÕES DO MENU DEBITO
 	private static void buscaOperacaoDebito(String op, boolean cadastrado, boolean ativado, CartaoDebito debito) {
-		if (op.equals("*")) {
+		if (op.equals("*")) {//CADASTRA DÉBITO
 			String numBandeira = retornaBandeira();
 			if (!numBandeira.equals("") || !numBandeira.equals("0") && cadastrado) {
 				// SETANDO SENHA
@@ -379,27 +487,26 @@ public class Main {
 		return 100.0;
 	}
 
-// retorna a bandeira do cart�o com base na opcao selecionada
+// retorna a bandeira do cartao com base na opcao selecionada
 	public static String retornaBandeira() {
 		Menus.exibeBandeirasCartoes();
 		String numBandeira = utils.lerConsole("|Digite a operação da bandeira: ");
 		// SETANDO BANDEIRA
-		if (numBandeira.equals("0")) {// VOLTA MENU ANTERIOR
-			System.out.println("\n\nCancelou a operação!");
-
-		} else if (numBandeira.equals("1"))// VISA
+		if (numBandeira.equals("1"))// VISA
 		{
 			System.out.println("\n    >>Visa selecionado!<<    \n");
-			numBandeira = "visa";
+			return "visa";
 
 		} else if (numBandeira.equals("2")) {// MASTERCARD
 			System.out.println("\n    >>Mastercard selecionado!<<    \n");
-			numBandeira = "mastercard";
+			return "mastercard";
 		} else if (numBandeira.equals("3")) {// MASTERCARD
 			System.out.println("\n    >>Elo selecionado!<<    \n");
-			numBandeira = "elo";
+			return "elo";
+		}else {
+			System.out.println("\n    >>Nenhuma opção selecionada!<<\n      Visa padrão selecionado!<<    \n");
+			return "visa";
 		}
-		return numBandeira;
 	}
 
 	// ATIVANDO OU DESATIVANDO CARTON
@@ -536,17 +643,17 @@ public class Main {
 	}
 
 	private static void exibirChavesDisponiveis() {
-		String textoCompleto = "";
+		List<String> textoCompleto = new ArrayList<String>();
 		if (ContaBO.cc != null && ContaBO.cp != null) {
 			textoCompleto = PixBO.exibirChavesPix(ContaBO.cc.getNumero(), ContaBO.cp.getNumero());
 			// System.out.println(textoCompleto);
-			UtilFormatConsole.writeConsoleQuebraLinha(textoCompleto, Utils.getLineCount(textoCompleto));
+			UtilFormatConsole.writeConsole(textoCompleto, textoCompleto.size());
 		} else if (ContaBO.cc != null) {
 			textoCompleto = PixBO.exibirChavesPix(ContaBO.cc.getNumero(), "0");
-			System.out.println(textoCompleto);
+			UtilFormatConsole.writeConsole(textoCompleto, textoCompleto.size());
 		} else if (ContaBO.cp != null) {
 			textoCompleto = PixBO.exibirChavesPix("0", ContaBO.cp.getNumero());
-			System.out.println(textoCompleto);
+			UtilFormatConsole.writeConsole(textoCompleto, textoCompleto.size());
 		}
 	}
 

@@ -84,7 +84,7 @@ public class ContaBO {
 		int cont = 0;
 		for (Conta conta : listConta) {
 			if (cont == 0) {
-				retorno.add("        Bem vindo " + conta.getCliente().getNome());
+				retorno.add(" Bem vindo " + conta.getCliente().getNome());
 				retorno.add(" >>Tipo conta: " + conta.getCliente().getTipo().name());
 				cont++;
 			}
@@ -93,13 +93,13 @@ public class ContaBO {
 				tipo++;
 				cc = conta; // SETA CONTA EM CONTA CORRENTE
 				retorno.add(" >>Numero corrente: " + conta.getNumero());
-				retorno.add(" >>Saldo:"+utils.convertToReais(consultarSaldo(conta)));
+				retorno.add(" >>Saldo:" + utils.convertToReais(consultarSaldo(conta)));
 			}
 			if (conta.getTipoConta() == TipoConta.ContaPoupanca) {
 				id = 2;
 				cp = conta; // SETA CONTA EM CONTA POUPANCA
 				retorno.add(" >>Numero poupanca: " + conta.getNumero());
-				retorno.add(" >>Saldo:"+ utils.convertToReais(consultarSaldo(conta)));
+				retorno.add(" >>Saldo:" + utils.convertToReais(consultarSaldo(conta)));
 				tipo++;
 			}
 			if (conta.getTipoConta() == TipoConta.ContaCorrente && conta.getTipoConta() == TipoConta.ContaPoupanca) {
@@ -109,16 +109,6 @@ public class ContaBO {
 		if (tipo == 2)
 			id = 3;
 		return retorno;
-	}
-
-	// ENVIA DADOS PARA UMA CLASSE VALIDACAO E RETORNA BOOLEAN
-	public static boolean validarCpf(String cpf) {
-		if (validaCPF.verificaCpf(cpf)) {
-			return true;
-		} else {
-			System.out.println("\n      >>Cpf Invalido! Digite corretamente!<<\n");
-			return false;
-		}
 	}
 
 	// CHAMA O BANCO E ENVIA CPF VALIDADO RETORNANDO A CONTA
@@ -152,17 +142,19 @@ public class ContaBO {
 
 	// BUSCA CONTA E TRANSFERE EM CONTA
 	public static String[] buscaContaeTransfere(String numDestino, double valorDeTransferencia, boolean tipo) {
-
-		String resposta[] = new String[2];
 		Conta contaDestino = consultaContaDestinoExistente(numDestino);
 		double taxa = 5.6;
 		boolean verifica = false;
-		transfereEntreContas("Transferencia", valorDeTransferencia, tipo, resposta, contaDestino, taxa, verifica);
-		return resposta;
+		return transfereEntreContas("Transferencia", valorDeTransferencia, tipo, contaDestino, taxa,
+				verifica);
 	}
 
-	public static void transfereEntreContas(String tipoTransferencia, double valorDeTransferencia, boolean tipo,
-			String[] resposta, Conta contaDestino, double taxa, boolean verifica) {
+	public static String[] transfereEntreContas(String tipoTransferencia, double valorDeTransferencia, boolean tipo,
+			 Conta contaDestino, double taxa, boolean verifica) {
+		String resposta[] = new String[2];
+		resposta[0] = "";
+		resposta[1] = "";
+		
 		if (contaDestino != null) {
 			if (!tipo && contaDestino.getTipoConta().ordinal() == 0) {
 				verifica = transferir(contaDestino, valorDeTransferencia, cc);
@@ -173,7 +165,7 @@ public class ContaBO {
 					resposta[0] = "\nTaxa de " + Utils.convertToReais(taxa)
 							+ " foi aplicada \npor se tratar de contas diferentes";
 				} else {
-					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " � aplicada a sua "
+					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " foi aplicada\n a sua "
 							+ tipoTransferencia + " Entre contas diferentes!";
 
 				}
@@ -184,7 +176,7 @@ public class ContaBO {
 					resposta[0] = "\nTaxa de " + Utils.convertToReais(taxa)
 							+ " foi aplicada por se tratar de contas diferentes";
 				} else {
-					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " � aplicada a sua "
+					resposta[0] = "\nLembre-se que a taxa de " + Utils.convertToReais(taxa) + " foi aplicada\n a sua "
 							+ tipoTransferencia + " entre contas diferentes!";
 				}
 			} else if (tipo && contaDestino.getTipoConta().ordinal() == 0) {
@@ -199,17 +191,22 @@ public class ContaBO {
 				resposta[1] = "1";
 			}
 		} else {
-			resposta[0] = "Esta conta n�o existe! \n";
+			resposta[0] = "Esta conta não existe! \n";
 			resposta[1] = "2";
 		}
+		return resposta;
 	}
 
 	// DEPOSITA EM CONTA
 	public static boolean depositaNaConta(boolean b) {
-		if (!b) {
-			return depositar(Double.parseDouble(utils.lerConsole("Digite o valor que deseja depositar: ")), cc);
-		} else {
-			return depositar(Double.parseDouble(utils.lerConsole("Digite o valor que deseja depositar: ")), cp);
+		try {
+			if (!b) {
+				return depositar(Double.parseDouble(utils.lerConsole("Digite o valor que deseja depositar: ")), cc);
+			} else {
+				return depositar(Double.parseDouble(utils.lerConsole("Digite o valor que deseja depositar: ")), cp);
+			}
+		} catch (NumberFormatException e) {
+			return false;
 		}
 
 	}
@@ -281,10 +278,14 @@ public class ContaBO {
 
 	// SAQUE EM CONTA
 	public static boolean saqueConta(boolean b) {
-		if (!b) {
-			return saque(Double.parseDouble(utils.lerConsole("Digite o valor que deseja sacar: ")), cc);
-		} else {
-			return saque(Double.parseDouble(utils.lerConsole("Digite o valor que deseja sacar: ")), cp);
+		try {
+			if (!b) {
+				return saque(Double.parseDouble(utils.lerConsole("Digite o valor que deseja sacar: ")), cc);
+			} else {
+				return saque(Double.parseDouble(utils.lerConsole("Digite o valor que deseja sacar: ")), cp);
+			}
+		} catch (NumberFormatException e) {
+			return false;
 		}
 
 	}
@@ -345,10 +346,20 @@ public class ContaBO {
 
 	public static boolean depositaEmUmaDasContas(double valor) {
 		Conta c = Banco.depositaEmUmaDasContas(valor);
-		if(c != null) {
+		if (c != null) {
 			verificaTipoConta(c);
 			return true;
-		}else {
+		} else {
+			return false;
+		}
+	}
+
+	// ENVIA DADOS PARA UMA CLASSE VALIDACAO E RETORNA BOOLEAN
+	public static boolean validarCpf(String cpf) {
+		if (validaCPF.verificaCpf(cpf)) {
+			return true;
+		} else {
+			System.out.println("\n      >>Cpf Invalido! Digite corretamente!<<\n");
 			return false;
 		}
 	}

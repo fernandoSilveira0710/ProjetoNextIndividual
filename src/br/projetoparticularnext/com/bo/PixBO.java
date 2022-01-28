@@ -1,5 +1,7 @@
 package br.projetoparticularnext.com.bo;
 
+import java.util.List;
+
 import br.projetoparticularnext.com.bean.conta.Conta;
 import br.projetoparticularnext.com.bean.pix.TipoChavePix;
 import br.projetoparticularnext.com.utils.Banco;
@@ -43,7 +45,7 @@ public class PixBO {
 			}
 			return conteudoChave;
 		}
-		public static String exibirChavesPix(String idCC, String idCP) {
+		public static List<String> exibirChavesPix(String idCC, String idCP) {
 			return Banco.consultaPix(idCC,idCP);
 		}
 		// BUSCA E TRANFERE VIA CHAVE PIX
@@ -51,9 +53,9 @@ public class PixBO {
 		String resposta[] = new String[2];
 		Conta contaDestino = Banco.buscaeTransferePix(chavePix);
 		if(contaDestino != null) {
-			ContaBO.transfereEntreContas("PIX",valor, tipo, resposta, contaDestino, 0, false);
+			resposta = ContaBO.transfereEntreContas("PIX",valor, tipo, contaDestino, 0, false);
 		}else {
-			resposta[0] = "         >>Esta conta n„o existe!<<";
+			resposta[0] = "         >>Esta conta n√£o existe!<<";
 			resposta[1] = "1";
 		}
 		

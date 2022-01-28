@@ -91,7 +91,7 @@ public class Utils {
 
 	// Barrinha de carregamento em milisegundos
 	// padr�o � 10
-	public static void loading(String text) {
+	public void loading(String text) {
 		sleep();
 		System.out.print("      " + text);
 		for (int i = 0; i < 8; i++) {
